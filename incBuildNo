@@ -1,0 +1,9 @@
+#!/bin/sh
+
+set -x
+
+N=`cut -f3 -d" " < build_no.h`
+
+N=`expr $N + 1`
+
+printf "#define BUILD_NO %d\n" $N > build_no.h

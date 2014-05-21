@@ -1,0 +1,828 @@
+.TH stol 1
+.I STOL
+is a stack based language in the spirit of FORTH.  It is entirely writen in C
+and I believe has several unique features.  In addition to the single data stack as
+in Forth, stol implements tow extra user stacks, and one system stack.
+The three stacks are the data (integer) stack, the string stack, and the floating
+point stack.  A range of words exist to allow transfer between and the loading of
+data onto these stacks.
+
+.bp
+
+.SH Name
+!
+.SH Stack effect
+
+	 value addr - 
+
+if addr points to a string or real then those stacks are modified by
+having the top entry removed.
+
+.SH Description
+.I !
+Takes the top value on the stack as a pointer to a variable, checks the variable type
+and depending on the type takes the value from the apropriate stack and assigns it to that variable.
+
+.SH "See Also"
+@
+
+.SH Bugs
+Performs no checking on the address.  If you put a silly value in you will probably get
+a segmentation violation.
+
+.bp
+
+.SH Name 
+*
+.SH Stack effect
+
+	a b - ab
+
+.SH Description
+.I *
+Takes the top two entries from the data stack and returns the product.
+
+.SH Bugs
+
+None
+.bp
+
+.SH Name
++
+.SH Stack effect
+
+	a b - a+b
+
+.SH Description
+.I +
+Takes the top two entries form the data stack and returns the sum.
+
+.SH Bugs
+
+None
+
+.bp
+
+.SH Name
++loop
+
+.SH Stack effect
+
+n - 
+
+.SH Description
+.I +loop
+is the teminating construct for a incremented loop it is used as follows :-
+.br
+
+10 0 do
+.br
+	i . cr
+.br
+	2
+.br
++loop
+.br
+
+This would count up from 0 to 10 in steps of 2.
+
+.SH "See Also"
+
+do, loop
+
+.SH BUGS
+
+None
+.bp
+
+.SH Name
+-
+
+.SH Stack effect
+
+	a b - a-b
+
+.SH Description
+
+Take the top two entries from the data stack and subtract the second from the first.
+
+.SH Bugs
+
+None
+.bp
+
+
+.SH Name
+ .
+.SH Stack effect
+
+n - 
+
+.SH Description
+
+ . Takes the top entry from the data stack and outputs it to the screen in the current number base.
+
+.SH "See Also"
+
+s.
+
+.SH Bugs
+
+None
+.bp
+
+.SH Name
+ ."     
+.SH Stack effect
+
+None
+
+.SH Description
+
+Prints a string between this word and a terminating ".
+
+.SH Bugs
+
+None
+.bp
+
+.SH Name
+ .s
+
+.SH Stack effect
+
+None
+
+.SH Description
+Outputs the contents of the data stack to standard out.
+
+.SH Bugs
+None
+.bp
+
+.SH Name
+ .ss
+.SH Stack effect
+
+None
+
+.SH Description
+Outputs the contents of the string stack to standard out.
+
+.SH Bugs
+
+None
+
+.bp
+
+.SH Name
+/
+.SH Stack Effect
+
+a b - a/b
+
+.SH Description
+
+Divide the second value on the stack by the top entry and leave the result on top of the stack.
+
+.SH Bugs
+
+None
+
+.SH Note
+
+Only operates on integer stack.  Use f/ for floats.
+
+.bp
+
+.SH Name
+0= 
+
+.SH "Stack Effect"
+
+a - flag
+
+.SH Description
+
+If the top stack entry is zero it is replaced with a 1, if non-zero it is replaced with a 0.
+
+.SH Bugs
+
+None
+
+.SH Note
+
+Only operates on the integer stack.  No equivalent exists for the floating
+point stack, as it is dangerous to test for equality with real numbers.
+If you do wish to test for this condition with a real number you have
+two alternatives.
+
+1. 0 f=
+
+2. ftoi 0=
+
+The latter will equate any positive real number n to 0 where 0 <= n < 1.
+
+.bp
+
+.SH Name
+1+
+
+.SH "Stack Effect"
+
+a - a+1
+
+.SH Description
+Add 1 to the top stack entry.
+
+.SH Bugs
+
+None
+
+.bp
+
+.SH Name
+:
+
+.SH "Stack Effect"
+
+None
+
+.SH Description
+This serves to compile new words into the dictionary. The token following : is used as the new words
+name.
+
+.SH "See Also"
+
+;
+
+.SH Bugs
+
+None
+.bp
+
+.SH Name
+;
+
+.SH "Stack Effect"
+
+None
+
+.SH Description
+This marks the end of a compiling word.
+
+.SH "See Also"
+
+:
+
+.SH Bugs
+
+None
+.bp
+
+.SH Name
+<
+
+.SH Stack effect
+
+a b - f
+
+.SH Description
+.I <
+returns a true flag if a < b otherwise a false flag.
+
+.SH Bugs
+None
+
+.bp
+
+.SH Name
+=
+
+.SH Stack effect
+a b - f
+
+.SH Description
+.I =
+returns a true flag if a = b.
+
+.SH Bugs
+None
+
+.bp
+
+.SH Name
+>
+
+.SH Stack effect
+a b - f
+
+.SH Description
+.I >
+takes the top two stack entries and returns a true flag if 
+if the second entry is greater than the top entry.
+
+.SH Bugs
+None
+
+.bp
+
+
+.SH Name
+@
+.SH Stack effect
+
+	addr --- value
+
+If addr points to a string or real then the value will be placed on the appropriate stack.
+.SH Description
+@ Takes the top entry from the data stack as a pointer to a variable, retrieves the data from it and places the data onto the appropriate stack.
+.SH Bugs
+None
+
+.bp
+.SH Name
+and
+
+.SH Stack effect
+
+	a b -- r
+
+.SH Description
+Perform a logical and on the top two stack entries and return the result.
+
+.SH Bugs
+None
+
+.bp
+.SH Name
+begin
+
+.SH Stack effect
+---
+.SH Description
+Used, in conjunction with the looping constructs again, until & while . . . repeat."
+
+.SH Bugs
+None
+
+
+.bp
+
+.SH Name
+constant
+
+.SH Stack effect
+value type ---
+
+.SH Description
+Used to define an unchangeable value.
+
+e.g.
+
+42 INTEGER constant test
+
+.SH Bugs
+None
+
+.bp
+.SH Name
+cr
+
+.SH Stack effect
+---
+
+.SH Description
+Send cr/lf to the conaole
+
+.SH Bugs
+None
+
+.bp
+
+.SH Name
+decimal
+
+.SH Stack effect
+---
+
+.SH Description
+Set number base to decimal.
+
+.SH Bugs
+None
+
+.bp
+
+.SH Name
+do
+
+.SH Stack effect
+max start --
+.SH Description
+Used in a counted loop in conjunction with either loop, or +loop
+
+e.g.
+
+: tst
+.br
+	10 0 do
+.br
+		cr i . 
+.br
+	loop
+.br
+;
+.br
+.bp
+
+Will print 0 to 9 (if the base is decimal)
+
+.SH Bugs
+None
+
+.SH Name
+drop 
+
+.SH Stack effect
+a c c --- a b
+.SH Description
+Remove the top stack entry.
+
+.SH Bugs
+None
+
+.bp
+
+.SH Name
+dup
+
+.SH Stack effect
+a -- a a
+.SH Description
+Duplicate the top stack entry.
+.SH Bugs
+None
+
+.bp
+
+.SH Name
+else
+
+.SH Stack effect
+---
+.SH Description
+
+.SH Bugs
+None
+
+.bp
+
+.SH Name
+emit
+
+.SH Stack effect
+cc --
+.SH Description
+Display the character who's ascii code is on the top of the stack.
+
+.SH Bugs
+None
+
+.bp
+
+
+.SH Name
+expect
+.SH Stack effect
+n -- addr count
+
+.SH Description
+Take, up to a maximum of n characters for the keyboard, and return the address and count.
+
+.SH Bugs
+None
+
+.bp
+
+.SH Name
+
+.SH Stack effect
+---
+.SH Description
+
+.SH Bugs
+None
+
+.bp
+
+.SH Name
+find
+
+.SH Stack effect
+
+DS: --- token
+SS: name --
+
+.SH Description
+Returns the token id for the word on the top of the string stack.
+
+Returns 1 if not found
+.SH Bugs
+Should return 0 if not found.
+None
+
+.bp
+
+.SH Name
+hex
+
+.SH Stack effect
+---
+.SH Description
+Set number base to hexadecimal.
+.SH Bugs
+None
+
+.bp
+
+.SH Name
+i
+
+.SH Stack effect
+-- n
+.SH Description
+do . . . loop index.
+
+.SH Bugs
+None
+
+.bp
+
+.SH Name
+key
+
+.SH Stack effect
+-- c
+.SH Description
+Get a character from the keyboard.
+
+.SH Bugs
+None
+
+.bp
+
+.SH Name
+loop
+
+.SH Stack effect
+---
+.SH Description
+End of a do . . . loop.
+
+.SH Bugs
+None
+
+.bp
+
+.SH Name
+dump
+
+.SH Stack effect
+addr count --
+.SH Description
+Display the contents of memory starting at addr for count bytes.
+
+.SH Bugs
+None
+
+.bp
+
+.SH Name
+not
+.SH Stack effect
+n --- not_n
+.SH Description
+Performs a bitwise inversion of the tos entry.
+e.g. (assuming hex)
+
+ff not . cr
+
+Returns
+
+ffffff00
+
+.SH Bugs
+None
+
+.bp
+
+.SH Name
+octal
+.SH Stack effect
+---
+.SH Description
+Set the number base to 8, i.e. octal.
+
+.SH Bugs
+None
+
+.bp
+
+.SH Name
+or
+.SH Stack effect
+a b -- c
+.SH Description
+Perform a bitwise or of the top two stack entries.
+
+e.g. 1 2 or
+Will result in 3
+
+.SH Bugs
+None
+
+.bp
+
+.SH Name
+rdump
+.SH Stack effect
+---
+.SH Description
+Display stol's internal resisters.
+
+.SH Bugs
+None
+
+.bp
+
+.SH Name
+rot
+.SH Stack effect
+a b c --- b c a
+.SH Description
+Rotate the 3rd stack entry to the top.
+
+.SH Bugs
+None
+
+.bp
+
+.SH Name
+type
+.SH Stack effect
+SS: string ---
+
+.SH Description
+Display the string currently at the top of the string stack.
+
+.SH Bugs
+None
+
+.bp
+
+.SH Name
+sdrop
+.SH Stack effect
+SS: str ---
+.SH Description
+Remove the entry from the top of the stack.
+
+.SH Bugs
+None
+
+.bp
+
+.SH Name
+sdup
+.SH Stack effect
+SS: str --- str str
+.SH Description
+Make a copy of the string on top of the string stack.
+
+.SH Bugs
+None
+
+.bp
+
+.SH Name
+
+.SH Stack effect
+
+.SH Description
+
+
+.SH Bugs
+None
+
+.bp
+
+.SH Name
+sleep
+.SH Stack effect
+n ---
+.SH Description
+Pause for n seconds.
+
+.SH Bugs
+None
+
+.bp
+.SH Name
+spaces
+.SH Stack effect
+n ---
+.SH Description
+Output n spaces.
+
+.SH Bugs
+None
+
+.bp
+.SH Name
+srot
+.SH Stack effect
+SS: a b c --- b c a
+
+.SH Description
+Rotate the 3rd entry on the string stack to the top.
+
+.SH Bugs
+None
+
+.bp
+
+.SH Name
+sswap
+.SH Stack effect
+SS: a b --- b a
+.SH Description
+Swap the top two entries of the string stack.
+
+.SH Bugs
+None
+
+.bp
+
+.SH Name
+words
+.SH Stack effect
+---
+.SH Description
+List the defined words.
+
+.SH Bugs
+None
+
+.bp
+
+.SH Name
+while
+.SH Stack effect
+---
+.SH Description
+Looping construct, used as
+
+begin . . . <test> while . . . repeat
+
+While the test is true the code between while and repeat is executed.
+
+.SH Bugs
+None
+
+.bp
+
+.SH Name
+xor
+.SH Stack effect
+a b --- c
+.SH Description
+Perform a bitwise exclusive or on the top two stack entries.
+
+.SH Bugs
+None
+
+.bp
+
+.SH Name
+variable
+.SH Stack effect
+---
+.SH Description
+Declare a named variable, e.g.
+
+INTEGER variable sequence
+
+.SH Bugs
+None
+
+.bp
+
+forget                          	 178
+FLOAT                           	 154
+
+if                              	  52
+
+INTEGER                         	 148
+STRING                          	 151
+variable                        	 157
