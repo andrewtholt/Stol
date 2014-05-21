@@ -51,7 +51,7 @@ void Startup() {
 
     r=pop();
 
-    if(r !=0 ) {
+    if(r ==0 ) {
         Eval();
         Load();
     }
@@ -121,7 +121,7 @@ void Eval () {
 
         cmd = spop();
 
-//        memset(regs.lbp,0x00,255);
+        //        memset(regs.lbp,0x00,255);
         strncpy(regs.lbp, (cmd + 1),cmd[0]+1);
         regs.lbp[ cmd[0] ] = 0x00;
         regs.lbp[ cmd[0]+1 ] = ' ';
@@ -131,7 +131,7 @@ void Eval () {
         regs.lbp[0] = 0x00;
         regs.lbp[1] = 0x00;
 
-//        memset(regs.lbp,0x00,255);
+        //        memset(regs.lbp,0x00,255);
     }
 }
 
@@ -165,54 +165,53 @@ void Load() {
 }
 
 
-    
+
 void tst() {
     int len;
 
     while(token()) {
-            len = pop();
-            if (len > 0) {
-                FindHeader();
-                if(pop()) {
-                    regs.ip = pop();
-                    push(regs.ip);
-                    if ((mem[regs.ip] == VOIDCAST docolon) && regs.mode) {
-                        mem[regs.dp++] = VOIDCAST pop();
-                    } else {
-                        do {
-                            if (regs.rsp > 0) {
-                                next();
-                            } else {
-                                exec();
-                            }
-                        } while (regs.rsp > 0);
-                    }
+        len = pop();
+        if (len > 0) {
+            FindHeader();
+            if(pop()) {
+                regs.ip = pop();
+                push(regs.ip);
+                if ((mem[regs.ip] == VOIDCAST docolon) && regs.mode) {
+                    mem[regs.dp++] = VOIDCAST pop();
                 } else {
-                    int tmp;
-
-                    tmp=STRTOL(pad,NULL,regs.base);
-
-                    if ( ((tmp == 0) && (*pad == 0x30)) || ( tmp != 0)) {
-                        if (!regs.mode) {
-                            push(tmp);
+                    do {
+                        if (regs.rsp > 0) {
+                            next();
                         } else {
-                            lit();
+                            exec();
                         }
-                    } else {
-                        printf("Unknown word :%s:\n",pad);
-                    }
+                    } while (regs.rsp > 0);
                 }
             } else {
-                drop();
+                int tmp;
+
+                tmp=STRTOL(pad,NULL,regs.base);
+
+                if ( ((tmp == 0) && (*pad == 0x30)) || ( tmp != 0)) {
+                    if (!regs.mode) {
+                        push(tmp);
+                    } else {
+                        lit();
+                    }
+                } else {
+                    printf("Unknown word :%s:\n",pad);
+                }
             }
+        } else {
+            drop();
         }
+    }
 }
 
-dosemi()
-{
+dosemi() {
     regs.ip = (unsigned int) poprs();
-    if (regs.rsp > 0)
-    {
+
+    if (regs.rsp > 0) {
         regs.wa = (unsigned int) mem[regs.ip++];
         regs.ca = VOIDCAST mem[regs.wa++];
 
@@ -220,18 +219,15 @@ dosemi()
     }
 }
 
-semi()
-{
-    if (regs.mode)
-    {
+semi() {
+    if (regs.mode) {
         regs.mode = 0;
         mem[regs.dp++] = Find("(;)");
     } else
         printf("\n; Compile mode only\n");
 }
 
-docolon()
-{
+docolon() {
     pushrs(regs.ip);
     regs.ip = regs.wa;
 
@@ -242,15 +238,18 @@ docolon()
 }
 
 
+/*
 pushrs(p)
     void            (**p) ();
+    */
+pushrs(void (**p) () )
 {
     rs[regs.rsp] = (int) p;
     regs.rsp++;
 }
 
-void            (**
-         poprs()) ()
+    void            (**
+            poprs()) ()
 {
     regs.rsp--;
     return (VOIDCAST rs[regs.rsp]);
@@ -271,17 +270,15 @@ void fromr() {
         push( poprs() );
     }
 }
-push(d)
-    int             d;
-{
+
+push(int d) {
     ds[regs.dsp] = d;
     regs.dsp++;
 }
 
 #if defined(STRINGS)
 #warning "STRINGS"
-spush(char *d)
-{
+spush(char *d) {
     strcpy(&ss[regs.ssp], d);
 
     regs.ssp++;
@@ -291,8 +288,8 @@ char *spop() {
     char           *ptr;
 
     regs.ssp--;
-    if (regs.ssp < 0)
-    {
+
+    if (regs.ssp < 0) {
         regs.ssp = 0;
         printf("\nString Stack Underflow\n");
     } else {
@@ -355,7 +352,7 @@ void ubootSystem() {
 
         ptr=spop();
 
-//        printf("U-Boot cmd is [%02d] >%s<\n",ptr[0],ptr+1);
+        //        printf("U-Boot cmd is [%02d] >%s<\n",ptr[0],ptr+1);
         push( RunCmd(ptr+1) );
     }
 }
@@ -364,7 +361,7 @@ void ubootSaveenv() {
     if (regs.mode) {
         mem[regs.dp++] = Find("saveenv");
     } else {
-//        saveenv();
+        //        saveenv();
         spush( RunCmd( "saveenv") );
     }
 }
@@ -651,7 +648,7 @@ fpush(d)
     regs.fsp++;
 }
 
-float
+    float
 fpop()
 {
     regs.fsp--;
@@ -692,10 +689,9 @@ popcs()
 
 drop()
 {
-    if (regs.mode)
+    if (regs.mode) {
         mem[regs.dp++] = Find("drop");
-    else
-    {
+    } else {
         regs.dsp--;
         if (regs.dsp < 0)
             regs.dsp = 0;
@@ -703,14 +699,12 @@ drop()
 }
 
 #if defined(STRINGS)
-sdrop()
-{
+sdrop() {
     char           *p;
 
-    if (regs.mode)
+    if (regs.mode) {
         mem[regs.dp++] = Find("sdrop");
-    else
-    {
+    } else {
         char           *tmp;
 
         if (regs.ssp > 0)
@@ -718,22 +712,19 @@ sdrop()
     }
 }
 
-sdup()
-{
+sdup() {
     char           *t, *p;
 
-    if (regs.mode)
+    if (regs.mode) {
         mem[regs.dp++] = Find("sdup");
-    else
-    {
+    } else {
         strcpy(&ss[regs.ssp], &ss[regs.ssp - 1]);
         regs.ssp++;
 
     }
 }
 
-sswap()
-{
+sswap() {
     if (regs.mode)
         mem[regs.dp++] = Find("sswap");
     else
@@ -894,8 +885,7 @@ sempty()
 
 dotq()
 {
-    if (regs.mode)
-    {
+    if (regs.mode) {
         char           *ptr, *keep;
         int             count = 0;
 
@@ -916,8 +906,7 @@ dotq()
         *(ptr + count) = '\0';
 
         mem[regs.dp++] = VOIDCAST ptr;
-    } else
-    {
+    } else {
         /*
          * fputs((char *) mem[regs.ip++], stdout);
          */
@@ -935,8 +924,7 @@ void ubootABI() {
 }
 #endif
 
-dots()
-{
+dots() {
     if (regs.mode) {
         mem[regs.dp++] = Find(".s");
     } else {
@@ -952,18 +940,15 @@ dots()
     }
 }
 
-dot()
-{
-    if (regs.mode)
+dot() {
+    if (regs.mode) {
         mem[regs.dp++] = Find(".");
-    else
-    {
+    } else {
         int             t;
 
-        if (regs.dsp == 0)
+        if (regs.dsp == 0) {
             printf("\nStack empty\n");
-        else
-        {
+        } else {
             t = pop();
             printf(regs.ipformat, t);
         }
@@ -990,30 +975,28 @@ void sdot() {
 }
 #endif
 
-lit()
-{
-    if (regs.mode)
-    {
+lit() {
+
+    if (regs.mode) {
         mem[regs.dp++] = Find("(lit)");
         mem[regs.dp++] = VOIDCAST STRTOL(pad,NULL,regs.base);
-    } else
+    } else {
         push(mem[regs.ip++]);
+    }
 }
 
-slit()
-{
-    if (regs.mode)
-    {
+slit() {
+
+    if (regs.mode) {
         mem[regs.dp++] = Find("(lit)");
         mem[regs.dp++] = strsave(pad);
-    } else
-    {
+    } else {
         char           *ptr;
 
         /*
-        ptr = (char *) strsave(mem[regs.ip++]);
-        push(ptr);
-        */
+           ptr = (char *) strsave(mem[regs.ip++]);
+           push(ptr);
+           */
         ptr = (char *) mem[regs.ip++];
         spush(ptr);
     }
@@ -1032,14 +1015,12 @@ void Min() {
     }
 }
 
-oneplus()
-{
+oneplus() {
     int             t;
 
-    if (regs.mode)
+    if (regs.mode) {
         mem[regs.dp++] = Find("1+");
-    else
-    {
+    } else {
         t = pop();
         t++;
         push(t);
@@ -1234,22 +1215,22 @@ void xor() {
     }
 }
 
-mon()
-{
+mon() {
     extern int rc;
-    printf("MON\n");
-    if (regs.mode)
+    //    printf("MON\n");
+
+    if (regs.mode) {
         mem[regs.dp++] = Find("mon");
-    else {
+    } else {
         exitFlag=1;
         rc=pop();
-//        return(0);
+        //        return(0);
     }
 }
 
 bye() {
     extern int rc;
-//    printf("BYE\n");
+    //    printf("BYE\n");
     if (regs.mode) {
         mem[regs.dp++] = Find("bye");
     } else {
@@ -1260,18 +1241,18 @@ bye() {
 
 #if defined(STRINGS)
 /*
-System()
-{
-    if (regs.mode)
-        mem[regs.dp++] = Find("system");
-    else
-    {
-        char           *ptr;
+   System()
+   {
+   if (regs.mode)
+   mem[regs.dp++] = Find("system");
+   else
+   {
+   char           *ptr;
 
-        ptr = spop();
-        push(system(ptr + 1));
-        //free(ptr);
-    }
+   ptr = spop();
+   push(system(ptr + 1));
+//free(ptr);
+}
 }
 */
 
@@ -1293,12 +1274,12 @@ void Getenv() {
 
 
         if (!ptr) {
-            push(0);
+            push(1);
         } else {
             env[0]=strlen(ptr);
             strcpy(&env[1],ptr);
             spush(env);
-            push(1);
+            push(0);
         }
     }
 }
@@ -1401,10 +1382,10 @@ void regdump()
     status();
 
     /*
-    if( regs.ssp > 0) {
-        printf("  String Stack top >%s<\n", ss[0]);
-    }
-    */
+       if( regs.ssp > 0) {
+       printf("  String Stack top >%s<\n", ss[0]);
+       }
+       */
 }
 
 status()
@@ -1471,7 +1452,7 @@ vlist() {
 }
 
 #ifdef ANSI
-void           *
+    void           *
 Find(name)
 #else
 Find(name)
@@ -1514,7 +1495,7 @@ TraceNoPause()
 
 
 
-char           *
+    char           *
 NumFind(num)
     int             num;
 {
@@ -1573,19 +1554,19 @@ mdump() {
     if (regs.mode) {
         mem[regs.dp++] = Find("dump");
     } else {
-        
+
         unsigned char  *from;
         int             count;
         unsigned int    i;
         int             j;
         unsigned char c;
-        
+
         count = pop();
         from = pop();
-        
+
         count= (count+0x0f) & 0xfff0;
-        
-        
+
+
         for(i=from; i < (from+count); i=i+0x10) {
             printf("%08x:",i);
             //
@@ -1594,12 +1575,12 @@ mdump() {
             for (j=0;j<0x10;j++) {
                 printf("%02x ",(*(char *)(i + j)) & 0xff);
             }
-            
-            
+
+
             printf(":");
             for (j=0;j<0x10;j++) {
                 c=(*(char *)(i + j)) & 0xff;
-                
+
                 if (c < 0x20) {
                     PUTC('.');
                 } else {
@@ -1898,8 +1879,8 @@ key()
             push(cbuf);
             cbuf = EMPTY;
         } else {
-//            tty_raw();
-//            nonblock(0);
+            //            tty_raw();
+            //            nonblock(0);
             i=GETC();
             push(i);
         }
@@ -1912,21 +1893,21 @@ qterm()
         mem[regs.dp++] = Find("?terminal");
     else
     {
-            /*
-            tty_raw();
-//            nonblock(0);
+        /*
+           tty_raw();
+        //            nonblock(0);
 
-            if(kbhit() !=0 )
-            {
-                cbuf=fGETC(stdin);
-                push(-1);
-            } else {
-                cbuf = EMPTY;
-                push(0);
-            }
-//            tty_reset();
-//            nonblock(1);
-    */
+        if(kbhit() !=0 )
+        {
+        cbuf=fGETC(stdin);
+        push(-1);
+        } else {
+        cbuf = EMPTY;
+        push(0);
+        }
+        //            tty_reset();
+        //            nonblock(1);
+        */
     }
 }
 
@@ -1942,16 +1923,16 @@ cget()
         cbuf = EMPTY;
         return (c & 0377);
     }
-//    setblock(0, 1);
+    //    setblock(0, 1);
     switch (GETC())
     {
-    case -1:
-        printf("cget read fail\n");
-        return(1);
-    case 0:
-        return (-1);
-    default:
-        return (c & 0377);
+        case -1:
+            printf("cget read fail\n");
+            return(1);
+        case 0:
+            return (-1);
+        default:
+            return (c & 0377);
     }
 }
 
@@ -2018,49 +1999,49 @@ fvariable( int mode) {
                 vptr->type = pop();
 
                 switch (vptr->type) {
-                case REGISTER:
-                    rptr = vptr;
-                    break;
-                case INTEGER:
-                    vptr->Read = IntRead;
-                    if (mode == VARIABLE) {
-                        vptr->Write = IntWrite;
-                    } else {
-                        vptr->Write = NULL;
-                        vptr->value.ivar = pop();
-                    }
-                    break;
+                    case REGISTER:
+                        rptr = vptr;
+                        break;
+                    case INTEGER:
+                        vptr->Read = IntRead;
+                        if (mode == VARIABLE) {
+                            vptr->Write = IntWrite;
+                        } else {
+                            vptr->Write = NULL;
+                            vptr->value.ivar = pop();
+                        }
+                        break;
 #if defined(STRINGS)
-                case STRING:
-                    vptr->Read = StrRead;
-                    if (mode == VARIABLE) {
-                        vptr->Write = StrWrite;
-                    } else {
-                        vptr->Write = NULL;
-                        /*
-                         * vptr->value.string =
-                         * spop();
-                         */
-                        strcpy(vptr->value.string, spop());
-                    }
-                    break;
+                    case STRING:
+                        vptr->Read = StrRead;
+                        if (mode == VARIABLE) {
+                            vptr->Write = StrWrite;
+                        } else {
+                            vptr->Write = NULL;
+                            /*
+                             * vptr->value.string =
+                             * spop();
+                             */
+                            strcpy(vptr->value.string, spop());
+                        }
+                        break;
 #endif
 #if defined(FLOATS)
-                case FLOAT:
-                    vptr->Read = FloatRead;
-                    if (mode == VARIABLE) {
-                        vptr->Write = FloatWrite;
-                    } else {
-                        vptr->Write = NULL;
-                        vptr->value.fvar = fpop();
-                    }
-                    break;
+                    case FLOAT:
+                        vptr->Read = FloatRead;
+                        if (mode == VARIABLE) {
+                            vptr->Write = FloatWrite;
+                        } else {
+                            vptr->Write = NULL;
+                            vptr->value.fvar = fpop();
+                        }
+                        break;
 #endif
-                case CHARACTER:
-                default:
-                    vptr->Read = NULL;
-                    vptr->Write = NULL;
-                    break;
+                    case CHARACTER:
+                    default:
+                        vptr->Read = NULL;
+                        vptr->Write = NULL;
+                        break;
                 }
 
                 rptr = vptr;
@@ -2121,30 +2102,30 @@ farray()
 
                     switch (vptr->member[i]->type)
                     {
-                    case REGISTER:
-                        rptr = vptr;
-                        break;
-                    case INTEGER:
-                        vptr->member[i]->Read = IntRead;
-                        vptr->member[i]->Write = IntWrite;
-                        break;
+                        case REGISTER:
+                            rptr = vptr;
+                            break;
+                        case INTEGER:
+                            vptr->member[i]->Read = IntRead;
+                            vptr->member[i]->Write = IntWrite;
+                            break;
 #if defined(STRINGS)
-                    case STRING:
-                        vptr->member[i]->Read = StrRead;
-                        vptr->member[i]->Write = StrWrite;
-                        break;
+                        case STRING:
+                            vptr->member[i]->Read = StrRead;
+                            vptr->member[i]->Write = StrWrite;
+                            break;
 #endif
 #if defined(FLOATS)
-                    case FLOAT:
-                        vptr->member[i]->Read = FloatRead;
-                        vptr->member[i]->Write = FloatWrite;
-                        break;
+                        case FLOAT:
+                            vptr->member[i]->Read = FloatRead;
+                            vptr->member[i]->Write = FloatWrite;
+                            break;
 #endif
-                    case CHARACTER:
-                    default:
-                        vptr->member[i]->Read = NULL;
-                        vptr->member[i]->Write = NULL;
-                        break;
+                        case CHARACTER:
+                        default:
+                            vptr->member[i]->Read = NULL;
+                            vptr->member[i]->Write = NULL;
+                            break;
                     }
                 }
 
@@ -2234,10 +2215,10 @@ StrRead()
 
     ptr = (struct variable *) pop();
     /*
-    str = (char *) strsave(ptr->value.string);
-    if (!str)
-        printf( "StrRead malloc fail\n");
-    */
+       str = (char *) strsave(ptr->value.string);
+       if (!str)
+       printf( "StrRead malloc fail\n");
+       */
     spush(&(ptr->value.string));
 }
 
@@ -2251,8 +2232,8 @@ StrWrite()
      * if (ptr->value.string) free(ptr->value.string);
      *
      * ptr->value.string = spop();
-    regs.ssp--;
-    strcpy(ptr->value.string, ss[regs.ssp].Entry);
+     regs.ssp--;
+     strcpy(ptr->value.string, ss[regs.ssp].Entry);
      */
     strcpy(ptr->value.string, spop());
 
@@ -2295,8 +2276,8 @@ wmemRead()
         val= *ptr;
         push( val & 0xffff);
 
-//        ptr = ((unsigned short int *) pop() & (unsigned short int *)0xffff);
-//        push(*ptr);
+        //        ptr = ((unsigned short int *) pop() & (unsigned short int *)0xffff);
+        //        push(*ptr);
 
     }
 }
@@ -2316,7 +2297,7 @@ wmemWrite()
 
         *ptr = val;
 
-// *ptr = pop() & 0xffff;
+        // *ptr = pop() & 0xffff;
     }
 }
 
@@ -2425,20 +2406,20 @@ at() {
             drop();
             switch (ptr->type) {
 #if defined(STRINGS)
-            case STRING:
-                sdrop();
-                break;
+                case STRING:
+                    sdrop();
+                    break;
 #endif
-            case INTEGER:
-                drop();
-                break;
+                case INTEGER:
+                    drop();
+                    break;
 #if defined(FLOATS)
-            case FLOAT:
-                fdrop();
-                break;
+                case FLOAT:
+                    fdrop();
+                    break;
 #endif
-            default:
-                break;
+                default:
+                    break;
             }
         }
     }
@@ -2462,20 +2443,20 @@ put()
             switch (ptr->type)
             {
 #if defined(STRINGS)
-            case STRING:
-                sdrop();
-                break;
+                case STRING:
+                    sdrop();
+                    break;
 #endif
-            case INTEGER:
-                drop();
-                break;
+                case INTEGER:
+                    drop();
+                    break;
 #if defined(FLOATS)
-            case FLOAT:
-                fdrop();
-                break;
+                case FLOAT:
+                    fdrop();
+                    break;
 #endif
-            default:
-                break;
+                default:
+                    break;
             }
         }
     }
@@ -2521,7 +2502,7 @@ void string() {
 
     ptr = (char *) strsave(start);
 
-    
+
     if (!ptr) {
         printf( "string Malloc fail\n");
     }
@@ -2651,8 +2632,8 @@ expect()
             printf( "expect malloc fail\n");
         else
         {
-//            tty_reset();
-//            nonblock(1);
+            //            tty_reset();
+            //            nonblock(1);
             do
             {
                 UDELAY(1);
@@ -2664,23 +2645,23 @@ expect()
 
                     switch (c)
                     {
-                    case 127:   /* delete */
-                    case '\b':
-                        if (i > 0)
-                        {
-                            printf( "\b \b");
-                            i--;
-                        }
-                        break;
-                    case '\n':
-                    case '\r':
-                        *(ptr + i) = '\0';
-                        done = 1;
-                        break;
-                    default:
-                        *(ptr + i) = c;
-                        i++;
-                        PUTC(c);
+                        case 127:   /* delete */
+                        case '\b':
+                            if (i > 0)
+                            {
+                                printf( "\b \b");
+                                i--;
+                            }
+                            break;
+                        case '\n':
+                        case '\r':
+                            *(ptr + i) = '\0';
+                            done = 1;
+                            break;
+                        default:
+                            *(ptr + i) = c;
+                            i++;
+                            PUTC(c);
                     }
                 }
             }
@@ -2789,8 +2770,8 @@ outc(c)
     int             c;
 {
     /*
-    putchar(c);
-    */
+       putchar(c);
+       */
 
     PUTC(c);
 }
@@ -2876,88 +2857,88 @@ PicExpect(x, y, pic)
     char           *s;
     char            c;
 
-/*
-    i = 0;
+    /*
+       i = 0;
 
-    count = strlen(pic);
-    ptr = (char *) malloc(count + 1);
-    if (!ptr)
-        printf( "picexpect malloc fail\n");
+       count = strlen(pic);
+       ptr = (char *) malloc(count + 1);
+       if (!ptr)
+       printf( "picexpect malloc fail\n");
 
-    s = (char *) tgoto(Move, y, x);
-    tputs(s, 1, outc);
-    fflush(out);
+       s = (char *) tgoto(Move, y, x);
+       tputs(s, 1, outc);
+       fflush(out);
 
-    Line();
-    do
+       Line();
+       do
+       {
+       c = keystroke(1);
+       switch (c)
+       {
+       case '\b':
+       if (i > 0)
+       {
+       printf( "\b \b");
+
+       i--;
+       }
+       break;
+       case '\n':
+       case '\r':
+     *(ptr + i) = '\0';
+     done = 1;
+     break;
+     default:
+     if (been == 0)
+     {
+     int             j;
+
+     for (j = 0; j < count; j++)
+     PUTC(' ', out);
+
+     s = (char *) tgoto(Move, y, x);
+     tputs(s, 1, outc);
+
+     been++;
+     }
+     switch (*(pic + i))
+     {
+    //                a-z A-Z 
+    case 'A':
+    if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
     {
-        c = keystroke(1);
-        switch (c)
-        {
-        case '\b':
-            if (i > 0)
-            {
-                printf( "\b \b");
-                
-                i--;
-            }
-            break;
-        case '\n':
-        case '\r':
-            *(ptr + i) = '\0';
-            done = 1;
-            break;
-        default:
-            if (been == 0)
-            {
-                int             j;
+     *(ptr + i) = c;
+     i++;
+     fPUTC(c, out);
 
-                for (j = 0; j < count; j++)
-                    PUTC(' ', out);
-                
-                s = (char *) tgoto(Move, y, x);
-                tputs(s, 1, outc);
-                
-                been++;
-            }
-            switch (*(pic + i))
-            {
-//                a-z A-Z 
-            case 'A':
-                if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
-                {
-                    *(ptr + i) = c;
-                    i++;
-                    fPUTC(c, out);
-                    
-                }
-                break;
-            case '#':
-                if (c >= '0' && c <= '9')
-                {
-                    *(ptr + i) = c;
-                    i++;
-                    fPUTC(c, out);
-                    
-                }
-                break;
-            case 'X':
-                *(ptr + i) = c;
-                i++;
-                fPUTC(c, out);
-                
-                break;
-            }
-        }
-    }
+     }
+     break;
+     case '#':
+     if (c >= '0' && c <= '9')
+     {
+     *(ptr + i) = c;
+     i++;
+     fPUTC(c, out);
+
+     }
+     break;
+     case 'X':
+     *(ptr + i) = c;
+     i++;
+     fPUTC(c, out);
+
+     break;
+}
+}
+}
 
 //     * while (!done && i < count);
-    while (!done);
+while (!done);
 
-    tty_reset();
+tty_reset();
 //    restore();
-    */
-    return (ptr);
+*/
+return (ptr);
 }
 
 #endif
@@ -2991,53 +2972,53 @@ void fsleep() {
 
 
 /*
-Getpid()
-{
-    if (regs.mode)
-        mem[regs.dp++] = Find("getpid");
-    else
-    {
-        int             pid;
+   Getpid()
+   {
+   if (regs.mode)
+   mem[regs.dp++] = Find("getpid");
+   else
+   {
+   int             pid;
 
-        pid = getpid();
-        push(pid);
-    }
-}
+   pid = getpid();
+   push(pid);
+   }
+   }
 
-Getuid()
-{
-    if (regs.mode)
-        mem[regs.dp++] = Find("getuid");
-    else
-    {
-        uid_t           uid;
+   Getuid()
+   {
+   if (regs.mode)
+   mem[regs.dp++] = Find("getuid");
+   else
+   {
+   uid_t           uid;
 
-        uid = getuid();
-        push(uid);
-    }
-}
-*/
+   uid = getuid();
+   push(uid);
+   }
+   }
+   */
 #if defined(STRINGS)
 /*
-Itoa()
-{
-    if (regs.mode)
-        mem[regs.dp++] = Find("itoa");
-    else
-    {
-        char            line[128];
-        char           *ptr;
-        int             val;
+   Itoa()
+   {
+   if (regs.mode)
+   mem[regs.dp++] = Find("itoa");
+   else
+   {
+   char            line[128];
+   char           *ptr;
+   int             val;
 
-        val = pop();
+   val = pop();
 
-        sprintf(line, regs.ipformat, val);
+   sprintf(line, regs.ipformat, val);
 
-        ptr = (char *) strsave(line);
-        spush(ptr);
-    }
-}
-*/
+   ptr = (char *) strsave(line);
+   spush(ptr);
+   }
+   }
+   */
 
 Atoi()
 {
@@ -3049,7 +3030,7 @@ Atoi()
         int             val;
 
         ptr = spop();
-//        val = atoi(ptr + 1);
+        //        val = atoi(ptr + 1);
 
         val=STRTOL(ptr+1,NULL,regs.base);
         push(val);
@@ -3091,8 +3072,8 @@ sfromi()
 }
 
 /*
-    Returns true if the strings are equal, false ,otherwise.
-*/
+   Returns true if the strings are equal, false ,otherwise.
+   */
 void Strcmp() {
 
     if (regs.mode) {
@@ -3116,9 +3097,9 @@ void Strcmp() {
             push(i);
         }
         /*
-        free(p1);
-        free(p2);
-        */
+           free(p1);
+           free(p2);
+           */
     }
 }
 
@@ -3161,53 +3142,53 @@ Strcut()
 }
 
 /*
-Strcat()
-{
-    if (regs.mode)
-        mem[regs.dp++] = Find("strcat");
-    else
-    {
-        char            scratch[512];
+   Strcat()
+   {
+   if (regs.mode)
+   mem[regs.dp++] = Find("strcat");
+   else
+   {
+   char            scratch[512];
 
-        sswap();
-        strcpy(scratch, spop());
-        strcat(scratch, spop());
-        spush(scratch);
-    }
-}
-*/
+   sswap();
+   strcpy(scratch, spop());
+   strcat(scratch, spop());
+   spush(scratch);
+   }
+   }
+   */
 /*
-Strtok()
-{
-    if (regs.mode)
-        mem[regs.dp++] = Find("strtok");
-    else
-    {
-        int             count = 0;
-        int             i;
+   Strtok()
+   {
+   if (regs.mode)
+   mem[regs.dp++] = Find("strtok");
+   else
+   {
+   int             count = 0;
+   int             i;
 
-        char           *str, *str1, *str2, *sep;
+   char           *str, *str1, *str2, *sep;
 
-        sep = spop();
-        str = spop();
+   sep = spop();
+   str = spop();
 
-        str1 = (char *) strtok(str, sep);
-        while (str1 != NULL)
-        {
-            count++;
-            str2 = strsave(str1);
-            push(str2);
-            str1 = (char *) strtok(NULL, sep);
-        }
-        free(str1);
-        free(sep);
+   str1 = (char *) strtok(str, sep);
+   while (str1 != NULL)
+   {
+   count++;
+   str2 = strsave(str1);
+   push(str2);
+   str1 = (char *) strtok(NULL, sep);
+   }
+   free(str1);
+   free(sep);
 
-        for (i = 0; i < count; i++)
-            spush(pop());
-        push(count);
-    }
-}
-*/
+   for (i = 0; i < count; i++)
+   spush(pop());
+   push(count);
+   }
+   }
+   */
 
 Token() {
     if (regs.mode) {
@@ -3216,304 +3197,304 @@ Token() {
         int count=1;
         int i=0;
         int exitFlag=0;
-//        regs.lbp++;
+        //        regs.lbp++;
         char buff[32];
 
 
         while( (*regs.lbp <= 0x20) || (*regs.lbp >= 0x7f))  {
             regs.lbp++;
         }
-        #ifdef UNIX
+#ifdef UNIX
         bzero( (void *)&buff[0],32);
         while( (isprint(*regs.lbp) ) && (exitFlag == 0)) {
-        #endif
+#endif
 
-        #ifdef UBOOT
-        for(i=0;i<32;i++) {
-            buff[i]=0x00;
-        }
-
-        while( (*regs.lbp > 0x1f) && (*regs.lbp < 0x7f) && (exitFlag == 0)) {
-        #endif
-            if( *regs.lbp != ' ' ) {
-                buff[count++]= (*regs.lbp);
-            } else {
-                exitFlag=1;
+#ifdef UBOOT
+            for(i=0;i<32;i++) {
+                buff[i]=0x00;
             }
-            regs.lbp++;
+
+            while( (*regs.lbp > 0x1f) && (*regs.lbp < 0x7f) && (exitFlag == 0)) {
+#endif
+                if( *regs.lbp != ' ' ) {
+                    buff[count++]= (*regs.lbp);
+                } else {
+                    exitFlag=1;
+                }
+                regs.lbp++;
+            }
+            buff[0]=strlen( &buff[1]);
+            spush( buff );
         }
-        buff[0]=strlen( &buff[1]);
-        spush( buff );
     }
-}
 
-BufSplit() {
-    if (regs.mode) {
-        mem[regs.dp++] = Find("bufsplit");
-    } else {
-        int             count = 0;
-        int             tokCount = 0;
-        char           *str, *str1, *str2, *sep;
+    BufSplit() {
+        if (regs.mode) {
+            mem[regs.dp++] = Find("bufsplit");
+        } else {
+            int             count = 0;
+            int             tokCount = 0;
+            char           *str, *str1, *str2, *sep;
 
-        sep = spop();
-        str = spop();
-        tokCount = pop();
+            sep = spop();
+            str = spop();
+            tokCount = pop();
 
-        if(strlen(sep) > 0) {
-            sep++;
+            if(strlen(sep) > 0) {
+                sep++;
+            }
+
+            if(strlen(str) > 0) {
+                str++;
+            }
+
+            VOIDCAST        bufsplit(sep, 0);
+            count = bufsplit(str, tokCount);
+            push(count);
         }
-
-        if(strlen(str) > 0) {
-            str++;
-        }
-
-        VOIDCAST        bufsplit(sep, 0);
-        count = bufsplit(str, tokCount);
-        push(count);
     }
-}
 #endif
 
-Malloc()
-{
-    if (regs.mode)
-        mem[regs.dp++] = Find("malloc");
-    else
+    Malloc()
     {
-        char           *ptr;
-        int             size;
-
-        size = pop();
-        ptr = (char *) malloc(size);
-        push(ptr);
-    }
-}
-
-Free()
-{
-    if (regs.mode)
-        mem[regs.dp++] = Find("free");
-    else
-    {
-        void *ptr;
-        ptr = (void *)pop();
-        free(ptr);
-    }
-}
-
-hash()
-{
-    *regs.lbp = '\n';
-    *(regs.lbp + 1) = '\0';
-}
-
-verbose()
-{
-    regs.verbose = 0xff;
-}
-
-quiet()
-{
-    regs.verbose = 0;
-}
-
-
-void mm() {
-    unsigned int             *addr;
-
-    addr = pop();
-
-    printf("mm:FIX ME \n");
-    /*
-    printf("%d\t%d\t", addr, mem[addr]);
-    scanf("%d", &mem[addr]);
-    */
-}
-
-/*
-lines()
-{
-    if (regs.mode)
-        mem[regs.dp++] = Find("lines");
-    else
-        push(slines);
-}
-
-columns()
-{
-    if (regs.mode)
-        mem[regs.dp++] = Find("columns");
-    else
-        push(scolumns);
-}
-*/
-
-#if defined(STRINGS)
-strtoc()
-{
-    if (regs.mode)
-        mem[regs.dp++] = Find("strtoc");
-    else
-    {
-        char           *ptr;
-        char            c;
-
-        int             len;
-        int             i;
-
-        ptr = spop();
-        len = strlen(ptr);
-
-        for (i = (len - 1); i >= 0; i--)
-            push(*(ptr + i));
-
-        push(len);
-    }
-}
-#endif
-
-/*
-fargc()
-{
-    if (regs.mode)
-        mem[regs.dp++] = Find("argc");
-    else
-    {
-        extern int      Argc;
-        push(Argc);
-    }
-}
-
-fargv()
-{
-    if (regs.mode)
-        mem[regs.dp++] = Find("argv");
-    else
-    {
-        extern char   **Argv;
-        char           *ptr;
-        char           *p;
-
-        int             position;
-        position = pop();
-        p = *(Argv + position);
-        ptr = (char *) strsave(p);
-        push(ptr);
-    }
-}
-*/
-
-#if defined(STRINGS)
-
-void athToken() {
-}
-
-void
-sinsert()
-{
-    if (regs.mode)
-        mem[regs.dp++] = Find("sinsert");
-    else
-    {
-        char            buffer[512];
-        int             insertAs = 0;
-        int             t;
-        int             i;
-
-        t = regs.ssp - 1;
-        strcpy(buffer, ss[t].Entry);
-        insertAs = pop();
-
-        for (i = t; i >= insertAs; i--)
+        if (regs.mode)
+            mem[regs.dp++] = Find("malloc");
+        else
         {
-            strcpy(ss[i].Entry, ss[i - 1].Entry);
+            char           *ptr;
+            int             size;
+
+            size = pop();
+            ptr = (char *) malloc(size);
+            push(ptr);
         }
-        strcpy(ss[insertAs].Entry, buffer);
     }
-}
+
+    Free()
+    {
+        if (regs.mode)
+            mem[regs.dp++] = Find("free");
+        else
+        {
+            void *ptr;
+            ptr = (void *)pop();
+            free(ptr);
+        }
+    }
+
+    hash()
+    {
+        *regs.lbp = '\n';
+        *(regs.lbp + 1) = '\0';
+    }
+
+    verbose()
+    {
+        regs.verbose = 0xff;
+    }
+
+    quiet()
+    {
+        regs.verbose = 0;
+    }
+
+
+    void mm() {
+        unsigned int             *addr;
+
+        addr = pop();
+
+        printf("mm:FIX ME \n");
+        /*
+           printf("%d\t%d\t", addr, mem[addr]);
+           scanf("%d", &mem[addr]);
+           */
+    }
+
+    /*
+       lines()
+       {
+       if (regs.mode)
+       mem[regs.dp++] = Find("lines");
+       else
+       push(slines);
+       }
+
+       columns()
+       {
+       if (regs.mode)
+       mem[regs.dp++] = Find("columns");
+       else
+       push(scolumns);
+       }
+       */
+
+#if defined(STRINGS)
+    strtoc()
+    {
+        if (regs.mode)
+            mem[regs.dp++] = Find("strtoc");
+        else
+        {
+            char           *ptr;
+            char            c;
+
+            int             len;
+            int             i;
+
+            ptr = spop();
+            len = strlen(ptr);
+
+            for (i = (len - 1); i >= 0; i--)
+                push(*(ptr + i));
+
+            push(len);
+        }
+    }
+#endif
+
+    /*
+       fargc()
+       {
+       if (regs.mode)
+       mem[regs.dp++] = Find("argc");
+       else
+       {
+       extern int      Argc;
+       push(Argc);
+       }
+       }
+
+       fargv()
+       {
+       if (regs.mode)
+       mem[regs.dp++] = Find("argv");
+       else
+       {
+       extern char   **Argv;
+       char           *ptr;
+       char           *p;
+
+       int             position;
+       position = pop();
+       p = *(Argv + position);
+       ptr = (char *) strsave(p);
+       push(ptr);
+       }
+       }
+       */
+
+#if defined(STRINGS)
+
+    void athToken() {
+    }
+
+    void
+        sinsert()
+        {
+            if (regs.mode)
+                mem[regs.dp++] = Find("sinsert");
+            else
+            {
+                char            buffer[512];
+                int             insertAs = 0;
+                int             t;
+                int             i;
+
+                t = regs.ssp - 1;
+                strcpy(buffer, ss[t].Entry);
+                insertAs = pop();
+
+                for (i = t; i >= insertAs; i--)
+                {
+                    strcpy(ss[i].Entry, ss[i - 1].Entry);
+                }
+                strcpy(ss[insertAs].Entry, buffer);
+            }
+        }
 #endif
 
 #if defined(SIGNALS)
-void
-alarmHandler()
-{
-    regs.ev_sigalarm++;
-}
+    void
+        alarmHandler()
+        {
+            regs.ev_sigalarm++;
+        }
 
-void
-getev_sigalarm()
-{
-    if (regs.mode)
-        mem[regs.dp++] = Find("ev_sigalarm_get");
-    else
-    {
-        push(regs.ev_sigalarm);
-    }
-}
+    void
+        getev_sigalarm()
+        {
+            if (regs.mode)
+                mem[regs.dp++] = Find("ev_sigalarm_get");
+            else
+            {
+                push(regs.ev_sigalarm);
+            }
+        }
 
-void
-clrev_sigalarm()
-{
-    if (regs.mode)
-        mem[regs.dp++] = Find("ev_sigalarm_clr");
-    else
-    {
-        regs.ev_sigalarm = 0;
-    }
-}
+    void
+        clrev_sigalarm()
+        {
+            if (regs.mode)
+                mem[regs.dp++] = Find("ev_sigalarm_clr");
+            else
+            {
+                regs.ev_sigalarm = 0;
+            }
+        }
 
 
-void
-Alarm()
-{
-    if (regs.mode)
-        mem[regs.dp++] = Find("alarm");
-    else
-    {
-        int             value;
-        int             ret;
+    void
+        Alarm()
+        {
+            if (regs.mode)
+                mem[regs.dp++] = Find("alarm");
+            else
+            {
+                int             value;
+                int             ret;
 
-        value = pop();
-        ret = signal(SIGALRM, alarmHandler);
-        alarm(value);
-        push(ret);
-    }
-}
+                value = pop();
+                ret = signal(SIGALRM, alarmHandler);
+                alarm(value);
+                push(ret);
+            }
+        }
 
-void
-sigioHandler()
-{
-    regs.ev_sigio++;
-}
+    void
+        sigioHandler()
+        {
+            regs.ev_sigio++;
+        }
 
-void
-getev_sigio()
-{
-    if (regs.mode)
-        mem[regs.dp++] = Find("ev_sigio_get");
-    else
-    {
-        push(regs.ev_sigio);
-    }
-}
+    void
+        getev_sigio()
+        {
+            if (regs.mode)
+                mem[regs.dp++] = Find("ev_sigio_get");
+            else
+            {
+                push(regs.ev_sigio);
+            }
+        }
 
-void
-clrev_sigio()
-{
-    if (regs.mode)
-        mem[regs.dp++] = Find("ev_sigio_clr");
-    else
-    {
-        regs.ev_sigio = 0;
-    }
-}
+    void
+        clrev_sigio()
+        {
+            if (regs.mode)
+                mem[regs.dp++] = Find("ev_sigio_clr");
+            else
+            {
+                regs.ev_sigio = 0;
+            }
+        }
 
-void
-SigIO()
-{
-    void           *ret;
-    ret = (void *) signal(SIGIO, sigioHandler);
-    if (ret == -1)
-        perror("SigIO");
-}
+    void
+        SigIO()
+        {
+            void           *ret;
+            ret = (void *) signal(SIGIO, sigioHandler);
+            if (ret == -1)
+                perror("SigIO");
+        }
 #endif
