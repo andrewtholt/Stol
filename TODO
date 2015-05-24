@@ -3,3 +3,12 @@ Change words so that success is indicated by a 0, failure by non-zero.
 
 Add abort, and abort" ....."
 
+Add a include
+
+Add command line switches
+    -h help
+    -f <name> load file at start
+    -e <words> Execute these and exit.
+
+
+
