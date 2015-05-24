@@ -1989,8 +1989,7 @@ fvariable( int mode) {
     if (regs.mode == 0) {
         token(); // get the variables name
 
-        if (pop())
-        {
+        if (pop()) {
             int             n;
             struct variable *vptr;
             vptr = (struct variable *) malloc(sizeof(struct variable));
