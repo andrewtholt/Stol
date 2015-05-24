@@ -1,10 +1,10 @@
 '       missing
 (       missing
-+loop   present
-,
++loop   tested
+,       tested
 ."      tested
-2*      missing
-2/      missing
+2*      tested
+2/      tested
 2@      missing
 :       tested
 ;       tested
@@ -15,17 +15,17 @@ align   missing
 aligned missing
 
 begin   present
-bl      missing
-cell+   missing
-cells   missing
-char    missing
+bl      tested
+cell+   Tested
+cells   Tested
+char    Tested
 constant present, non-standard
 create
 do      tested
 does>   missing
 else    present
 environment? - Missing, not mandatory
-evaluate    missing
+evaluate    Tested
 exit    missing
 find    present - requires string stack
 fm/mod  missing
@@ -46,7 +46,7 @@ unloop  missing
 until   present
 variable    present - non standard
 while   present
-word    missing
+word    missing - New function see strchr
 [       missing
 [']     missing
 [char]  missing

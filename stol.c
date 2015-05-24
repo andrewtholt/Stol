@@ -122,7 +122,6 @@ int main (int argc, char *argv[]) {
     rc=0;
     latest = (struct header *) NULL;
     
-	/* Print the ABI version */
     
 
     for(i=0;i<4000;i++) {
@@ -130,6 +129,7 @@ int main (int argc, char *argv[]) {
     }
 
     #ifdef UBOOT
+	/* Print the ABI version */
 	app_startup(argv);
     /*
 	printf ("Example expects ABI version %d\n", XF_VERSION);
@@ -154,8 +154,14 @@ int main (int argc, char *argv[]) {
     
     MakePrim("-", sub);
     MakePrim("*", mul);
+    MakePrim("2*", TwoTimes);
     MakePrim("/", div);
+    MakePrim("2/", TwoDiv);
     MakePrim("mod", mod);
+    MakePrim("char", Char);
+    MakePrim("cell", Cell);
+    MakePrim("cells", Cells);
+    MakePrim("cell+", CellPlus);
     MakePrim("+", add);
     MakePrim("=", equal);
     MakePrim(">", gt);
@@ -259,6 +265,9 @@ int main (int argc, char *argv[]) {
 
     MakePrim("malloc", Malloc);
     MakePrim("free", Free);
+    MakePrim("spaces", spaces);
+    MakePrim("bl", Blank);
+    MakePrim("'", Tick);
 #if defined(STRINGS)
     MakePrim("token", Token); 
     MakePrim("bufsplit", BufSplit); 
@@ -274,7 +283,7 @@ int main (int argc, char *argv[]) {
     MakePrim("sdrop", sdrop);
     MakePrim("sswap", sswap);
     MakePrim("sdup", sdup);
-    MakePrim("eval", Eval);
+    MakePrim("evaluate", Eval);
     MakePrim("mem2string",mem2string);
     MakePrim("string-ptr",stringPtr);
     MakePrim("load",Load);
@@ -296,7 +305,7 @@ int main (int argc, char *argv[]) {
     MakePrim("constant", constant);
     MakePrim("c@", cat);
     MakePrim("c!", cstore);
-    MakePrim("exec", Exec);
+    MakePrim("execute", Exec);
     
     MakeVariable("test", CONSTANT, 1, NULL);
 

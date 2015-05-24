@@ -102,7 +102,7 @@ exec() {
 
 void Exec() {
     if (regs.mode) {
-        mem[regs.dp++] = Find("exec");
+        mem[regs.dp++] = Find("execute");
     } else {
         exec();
     }
@@ -110,7 +110,7 @@ void Exec() {
 
 void Eval () {
     if (regs.mode) {
-        mem[regs.dp++] = Find("eval");
+        mem[regs.dp++] = Find("evaluate");
     } else {
         char *cmd;
         void *ca;
@@ -239,9 +239,9 @@ docolon() {
 
 
 /*
-pushrs(p)
-    void            (**p) ();
-    */
+   pushrs(p)
+   void            (**p) ();
+   */
 pushrs(void (**p) () )
 {
     rs[regs.rsp] = (int) p;
@@ -1074,14 +1074,52 @@ add()
     }
 }
 
+void Char() {
+    if (regs.mode) {
+        mem[regs.dp++] = Find("char");
+    } else {
+        push(sizeof(char));
+    }
+}
+
+void Cell() {
+    if (regs.mode) {
+        mem[regs.dp++] = Find("cell");
+    } else {
+        push(sizeof(int));
+    }
+}
+
+void Cells() {
+    int t;
+
+    if (regs.mode) {
+        mem[regs.dp++] = Find("cells");
+    } else {
+        t = pop();
+        push(t * sizeof(int));
+    }
+}
+
+void CellPlus() {
+    int t;
+
+    if (regs.mode) {
+        mem[regs.dp++] = Find("cell+");
+    } else {
+        t = pop();
+        push(t + sizeof(int));
+    }
+}
+
+
 mul()
 {
     int             t;
 
-    if (regs.mode)
+    if (regs.mode) {
         mem[regs.dp++] = Find("*");
-    else
-    {
+    } else {
         t = pop();
         t *= pop();
         push(t);
@@ -1102,6 +1140,29 @@ div()
         push(t);
     }
 }
+
+TwoTimes() {
+    int t;
+
+    if (regs.mode) {
+        mem[regs.dp++] = Find("2*");
+    } else {
+        t = pop();
+        push(t*2);
+    }
+}
+
+TwoDiv() {
+    int t;
+
+    if (regs.mode) {
+        mem[regs.dp++] = Find("2/");
+    } else {
+        t = pop();
+        push(t/2);
+    }
+}
+
 
 mod()
 {
@@ -1453,8 +1514,7 @@ vlist() {
 }
 
 #ifdef ANSI
-    void           *
-Find(name)
+    void           *Find(name)
 #else
 Find(name)
 #endif
@@ -1464,11 +1524,33 @@ Find(name)
 
     ptr = latest;
 
-    while ((strcmp(name, ptr->name)) && ptr->lfa != 0)
+    while ((strcmp(name, ptr->name)) && ptr->lfa != 0) {
         ptr = ptr->lfa;
+    }
 
-    return (VOIDCAST ptr->cfa);
+    if ( 0 == ptr->lfa) {
+        return(0);
+    } else {
+        return (VOIDCAST ptr->cfa);
+    }
 }
+
+Tick() {
+    if (regs.mode) {
+        mem[regs.dp++] = Find("'");
+    } else {
+        char *ptr;
+        int len;
+
+        token();
+        len=pop();
+        if ( len > 0 ) {
+            ptr = pad;
+            push(Find( pad ));
+        }
+    }
+}
+
 TraceOn()
 {
     if (regs.mode)
@@ -2942,12 +3024,19 @@ return (ptr);
 }
 
 #endif
-spaces()
-{
-    if (regs.mode)
+
+Blank() {
+    if (regs.mode) {
+        mem[regs.dp++] = Find("bl");
+    } else {
+        push(32);
+    }
+}
+
+spaces() {
+    if (regs.mode) {
         mem[regs.dp++] = Find("spaces");
-    else
-    {
+    } else {
         int             count;
         int             i;
 
@@ -3121,10 +3210,9 @@ Strlen()
 
 Strcut()
 {
-    if (regs.mode)
+    if (regs.mode) {
         mem[regs.dp++] = Find("strcut");
-    else
-    {
+    } else {
         char           *str, *str1, *str2;
         int             pos;
 
@@ -3227,6 +3315,7 @@ Token() {
             spush( buff );
         }
     }
+
 
     BufSplit() {
         if (regs.mode) {
