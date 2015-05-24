@@ -950,7 +950,8 @@ dot() {
             printf("\nStack empty\n");
         } else {
             t = pop();
-            printf(regs.ipformat, t);
+            printf(&regs.ipformat[1], t);
+            fflush(stdout);
         }
     }
 }
