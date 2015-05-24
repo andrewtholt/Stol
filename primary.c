@@ -93,7 +93,7 @@ next()
     (*regs.ca) ();
 }
 
-exec() {
+void exec() {
     regs.wa = pop();
     regs.ca = VOIDCAST mem[regs.wa++];
 
@@ -208,7 +208,7 @@ void tst() {
     }
 }
 
-dosemi() {
+void dosemi() {
     regs.ip = (unsigned int) poprs();
 
     if (regs.rsp > 0) {
@@ -219,7 +219,7 @@ dosemi() {
     }
 }
 
-semi() {
+void semi() {
     if (regs.mode) {
         regs.mode = 0;
         mem[regs.dp++] = Find("(;)");
@@ -227,7 +227,7 @@ semi() {
         printf("\n; Compile mode only\n");
 }
 
-docolon() {
+void docolon() {
     pushrs(regs.ip);
     regs.ip = regs.wa;
 
@@ -238,18 +238,12 @@ docolon() {
 }
 
 
-/*
-   pushrs(p)
-   void            (**p) ();
-   */
-pushrs(void (**p) () )
-{
+void pushrs(void (**p) () ) {
     rs[regs.rsp] = (int) p;
     regs.rsp++;
 }
 
-    void            (**
-            poprs()) ()
+void (**poprs()) ()
 {
     regs.rsp--;
     return (VOIDCAST rs[regs.rsp]);
@@ -324,7 +318,7 @@ void mem2string() {
             tmp[i] = *(ptr + i);
         }
     }
-    printf("len=%d\n",strlen(tmp));
+//    printf("len=%d\n",strlen(tmp));
     spush( &tmp[0] );
 }
 //
@@ -661,11 +655,9 @@ fpop()
 }
 #endif
 
-pop()
-{
+pop() {
     regs.dsp--;
-    if (regs.dsp < 0)
-    {
+    if (regs.dsp < 0) {
         regs.dsp = 0;
         printf("\nData (integer) stack Underflow\007\n");
 
@@ -674,21 +666,17 @@ pop()
 }
 
 
-pushcs(d)
-    int             d;
-{
+pushcs(int d) {
     cs[regs.csp] = d;
     regs.csp++;
 }
 
-popcs()
-{
+int popcs() {
     regs.csp--;
     return (cs[regs.csp]);
 }
 
-drop()
-{
+void drop() {
     if (regs.mode) {
         mem[regs.dp++] = Find("drop");
     } else {
@@ -707,28 +695,28 @@ sdrop() {
     } else {
         char           *tmp;
 
-        if (regs.ssp > 0)
+        if (regs.ssp > 0) {
             regs.ssp--;
+        }
     }
 }
 
-sdup() {
-    char           *t, *p;
-
+void sdup() {
     if (regs.mode) {
         mem[regs.dp++] = Find("sdup");
     } else {
+        char           *t, *p;
+
         strcpy(&ss[regs.ssp], &ss[regs.ssp - 1]);
         regs.ssp++;
 
     }
 }
 
-sswap() {
-    if (regs.mode)
+void sswap() {
+    if (regs.mode) {
         mem[regs.dp++] = Find("sswap");
-    else
-    {
+    } else {
         char            scratch[512];
 
 

@@ -121,8 +121,6 @@ int main (int argc, char *argv[]) {
     
     rc=0;
     latest = (struct header *) NULL;
-    
-    
 
     for(i=0;i<4000;i++) {
         mem[i] = 0;
@@ -449,8 +447,7 @@ size_t strlen(const char *s) {
     return(i);
 }
 
-void Inline()
-{
+void Inline() {
     char           *c;
     
     regs.lbp = lb;
@@ -467,17 +464,14 @@ void Inline()
     regs.lbp = lb;
 }
 
-FindHeader()
-{
+void FindHeader() {
     struct header  *ptr;
     int             found = 0;
     
     ptr = latest;
     
-    while (ptr != (struct header *) NULL)
-    {
-        if (!strcmp(pad, ptr->name))
-        {
+    while (ptr != (struct header *) NULL) {
+        if (!strcmp(pad, ptr->name)) {
             cword = ptr;
             push(ptr->cfa);
             found = 1;
@@ -488,34 +482,30 @@ FindHeader()
     push(found);
 }
 
-
-
-void MakeHeader(char *name, int (*func) () )
-{
+MakeHeader(char *name, int (*func) () ) {
     struct header  *hp;
     
     hp = (struct header *) malloc(sizeof(struct header));
     
-    if (!hp)
-    {
+    if (!hp) {
         printf("Malloc fail in MakeHeader\n");
         return(1);
     }
     hp->len = strlen(name);
     hp->name = (char *) malloc(hp->len + 1);
-    if (!hp->name)
-    {
+
+    if (!hp->name) {
         printf("Malloc2 fail in MakeHeader\n");
         return(1);
     }
+
     hp->cfa = (int) func;
     strcpy(hp->name, name);
-    if (!latest)
-    {
+
+    if (!latest) {
         latest = hp;
         hp->lfa = (struct header *) NULL;
-    } else
-    {
+    } else {
         hp->lfa = latest;
         latest = hp;
     }

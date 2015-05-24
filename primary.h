@@ -42,10 +42,10 @@ extern void     restore();
 extern char     keystroke();
 extern int      TermOK;
 
-int             docolon();
+void             docolon();
 int             next();
-int             exec();
-int             semi();
+void             exec();
+void             semi();
 
 int             IntRead();
 int             IntWrite();
