@@ -302,7 +302,7 @@ int main (int argc, char *argv[]) {
     MakePrim("reset", sysReset);
     MakePrim("forget", forget);
     MakePrim("expect", expect);
-    MakePrim("constant", constant);
+    MakePrim("(constant)", constant);
     MakePrim("c@", cat);
     MakePrim("c!", cstore);
     MakePrim("execute", Exec);
@@ -334,7 +334,7 @@ int main (int argc, char *argv[]) {
     while(!exitFlag) {
         regs.lbp = &lb[0];
 
-        printf(":%d:OK>\n",regs.dsp);
+        printf("\n:%d:OK>",regs.dsp);
         Inline();
 
         while(token()) {
@@ -528,7 +528,7 @@ void MakePrim(char *name, int (*func)()) {
     mem[regs.dp++] = VOIDCAST next;
 }
 
-MakeVariable( char *name, int type, int (*rd) (), int (*wr) ()) {
+void MakeVariable( char *name, int type, int (*rd) (), int (*wr) ()) {
     push(type);
     regs.lbp = lb;
     strcpy(lb, name);

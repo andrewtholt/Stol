@@ -25,4 +25,4 @@ stol
 .settings
 *.c~
 .gdb_history
-.primary.c.swp
+.*.swp

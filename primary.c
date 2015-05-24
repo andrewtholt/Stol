@@ -1016,61 +1016,47 @@ void Min() {
     }
 }
 
-oneplus() {
+void oneplus() {
     int             t;
 
     if (regs.mode) {
         mem[regs.dp++] = Find("1+");
     } else {
-        t = pop();
-        t++;
-        push(t);
+        ds[regs.dsp-1]++;
     }
 }
 
-oneminus()
-{
+void oneminus() {
     int             t;
 
-    if (regs.mode)
+    if (regs.mode) {
         mem[regs.dp++] = Find("1-");
-    else
-    {
-        t = pop();
-        t--;
-        push(t);
+    } else {
+        ds[regs.dsp-1]--;
     }
 }
 
-sub()
-{
-    if (regs.mode)
+void sub() {
+    if (regs.mode) {
         mem[regs.dp++] = Find("-");
-    else
-    {
+    } else {
         int             a;
         int             b;
         int             t;
 
         b = pop();
-        a = pop();
-        t = a - b;
-
-        push(t);
+        ds[regs.dsp-1] -= b;
     }
 }
 
-add()
-{
+void add() {
     int             t;
 
-    if (regs.mode)
+    if (regs.mode) {
         mem[regs.dp++] = Find("+");
-    else
-    {
+    } else {
         t = pop();
-        t += pop();
-        push(t);
+        ds[regs.dsp-1] += t;
     }
 }
 
@@ -1091,13 +1077,11 @@ void Cell() {
 }
 
 void Cells() {
-    int t;
 
     if (regs.mode) {
         mem[regs.dp++] = Find("cells");
     } else {
-        t = pop();
-        push(t * sizeof(int));
+        ds[regs.dsp-1] *= sizeof(int);
     }
 }
 
@@ -1107,37 +1091,30 @@ void CellPlus() {
     if (regs.mode) {
         mem[regs.dp++] = Find("cell+");
     } else {
-        t = pop();
-        push(t + sizeof(int));
+        ds[regs.dsp-1] += sizeof(int);
     }
 }
 
 
-mul()
-{
+void mul() {
     int             t;
 
     if (regs.mode) {
         mem[regs.dp++] = Find("*");
     } else {
         t = pop();
-        t *= pop();
-        push(t);
+        ds[regs.dsp-1] *= t;
     }
 }
 
-div()
-{
+void div() {
     int             t;
 
-    if (regs.mode)
+    if (regs.mode) {
         mem[regs.dp++] = Find("/");
-    else
-    {
+    } else {
         t = pop();
-
-        t = pop() / t;
-        push(t);
+        ds[regs.dsp-1] /= t;
     }
 }
 
@@ -1147,8 +1124,7 @@ TwoTimes() {
     if (regs.mode) {
         mem[regs.dp++] = Find("2*");
     } else {
-        t = pop();
-        push(t*2);
+        ds[regs.dsp-1] *= 2;
     }
 }
 
@@ -1158,63 +1134,49 @@ TwoDiv() {
     if (regs.mode) {
         mem[regs.dp++] = Find("2/");
     } else {
-        t = pop();
-        push(t/2);
+        ds[regs.dsp-1] /= 2;
     }
 }
 
 
-mod()
-{
+void mod() {
     int             t;
 
-    if (regs.mode)
+    if (regs.mode) {
         mem[regs.dp++] = Find("mod");
-    else
-    {
+    } else {
         t = pop();
-
-        t = pop() % t;
-        push(t);
+        ds[regs.dsp-1] %= t;
     }
 }
 
-gt()
-{
+void gt() {
     int             a, b;
 
-    if (regs.mode)
+    if (regs.mode) {
         mem[regs.dp++] = Find(">");
-    else
-    {
+    } else {
         a = pop();
-        b = pop();
-        push(b > a);
+        ds[regs.dsp-1] = ds[regs.dsp-1] > a;
     }
 }
 
-lt()
-{
+void lt() {
     int             a, b;
 
-    if (regs.mode)
+    if (regs.mode) {
         mem[regs.dp++] = Find("<");
-    else
-    {
+    } else {
         a = pop();
-        b = pop();
-        push(b < a);
+        ds[regs.dsp-1] = ds[regs.dsp-1] < a;
     }
 }
 
-zequ() {
+void zequ() {
     if (regs.mode) {
         mem[regs.dp++] = Find("0=");
     } else {
-        if (pop())
-            push(0);
-        else
-            push(1);
+        ds[regs.dsp-1] = (0 == ds[regs.dsp-1]);
     }
 }
 
@@ -1222,11 +1184,7 @@ void znequ() {
     if (regs.mode) {
         mem[regs.dp++] = Find("0<>");
     } else {
-        if (pop()) {
-            push(1);
-        } else {
-            push(0);
-        }
+        ds[regs.dsp-1] = (0 != ds[regs.dsp-1]);
     }
 }
 
@@ -1236,9 +1194,7 @@ void not() {
     if (regs.mode) {
         mem[regs.dp++] = Find("not");
     } else {
-        t = pop();
-
-        push(~t);
+        ds[regs.dsp-1] = (~ds[regs.dsp-1]);
     }
 }
 
@@ -1248,28 +1204,28 @@ void and() {
     } else {
         int             t;
         t = pop();
-        push(t & pop());
+        ds[regs.dsp-1] &= t;
     }
 }
 
 
 void or() {
-    int             t;
     if (regs.mode) {
         mem[regs.dp++] = Find("or");
     } else {
+        int             t;
         t = pop();
-        push(t | pop());
+        ds[regs.dsp-1] |= t;
     }
 }
 
 void xor() {
-    int             a;
-    int             b;
-
     if (regs.mode) {
         mem[regs.dp++] = Find("xor");
     } else {
+        int             a;
+        int             b;
+
         a = pop();
         b = pop();
 
@@ -1450,11 +1406,10 @@ void regdump()
        */
 }
 
-status()
-{
+void status() {
     printf("\tbase\t\t%2d\n", regs.base);
-    printf("\tfpformat\t%s\n", regs.fpformat);
-    printf("\tipformat\t%s\n", regs.ipformat);
+    printf("\tfpformat\t%s\n", &regs.fpformat[1]);
+    printf("\tipformat\t%s\n", &regs.ipformat[1]);
     printf("\tVerbose\t\t");
     if (regs.verbose)
         printf("Yes");
@@ -1904,35 +1859,29 @@ cr()
         printf("\n");
 }
 
-hex()
-{
-    if (regs.mode)
+void hex() {
+    if (regs.mode) {
         mem[regs.dp++] = Find("hex");
-    else
-    {
-        strcpy(regs.ipformat, "%x");
+    } else {
+        strcpy(regs.ipformat, "\002%x");
         regs.base = 16;
     }
 }
 
-decimal()
-{
-    if (regs.mode)
+void decimal() {
+    if (regs.mode) {
         mem[regs.dp++] = Find("decimal");
-    else
-    {
-        strcpy(regs.ipformat, "%d");
+    } else {
+        strcpy(regs.ipformat, "\002%d");
         regs.base = 10;
     }
 }
 
-octal()
-{
-    if (regs.mode)
+void octal() {
+    if (regs.mode) {
         mem[regs.dp++] = Find("octal");
-    else
-    {
-        strcpy(regs.ipformat, "%o");
+    } else {
+        strcpy(regs.ipformat, "\002%o");
         regs.base = 8;
     }
 }
@@ -1949,16 +1898,13 @@ emit()
     }
 }
 
-key()
-{
-    if (regs.mode)
+void key() {
+    if (regs.mode) {
         mem[regs.dp++] = Find("key");
-    else
-    {
+    } else {
         int i;
 
-        if (cbuf != EMPTY)
-        {
+        if (cbuf != EMPTY) {
             push(cbuf);
             cbuf = EMPTY;
         } else {
