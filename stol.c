@@ -121,15 +121,13 @@ int main (int argc, char *argv[]) {
     
     rc=0;
     latest = (struct header *) NULL;
-    
-	/* Print the ABI version */
-    
 
     for(i=0;i<4000;i++) {
         mem[i] = 0;
     }
 
     #ifdef UBOOT
+	/* Print the ABI version */
 	app_startup(argv);
     /*
 	printf ("Example expects ABI version %d\n", XF_VERSION);
@@ -154,8 +152,14 @@ int main (int argc, char *argv[]) {
     
     MakePrim("-", sub);
     MakePrim("*", mul);
+    MakePrim("2*", TwoTimes);
     MakePrim("/", div);
+    MakePrim("2/", TwoDiv);
     MakePrim("mod", mod);
+    MakePrim("char", Char);
+    MakePrim("cell", Cell);
+    MakePrim("cells", Cells);
+    MakePrim("cell+", CellPlus);
     MakePrim("+", add);
     MakePrim("=", equal);
     MakePrim(">", gt);
@@ -259,6 +263,9 @@ int main (int argc, char *argv[]) {
 
     MakePrim("malloc", Malloc);
     MakePrim("free", Free);
+    MakePrim("spaces", spaces);
+    MakePrim("bl", Blank);
+    MakePrim("'", Tick);
 #if defined(STRINGS)
     MakePrim("token", Token); 
     MakePrim("bufsplit", BufSplit); 
@@ -274,7 +281,7 @@ int main (int argc, char *argv[]) {
     MakePrim("sdrop", sdrop);
     MakePrim("sswap", sswap);
     MakePrim("sdup", sdup);
-    MakePrim("eval", Eval);
+    MakePrim("evaluate", Eval);
     MakePrim("mem2string",mem2string);
     MakePrim("string-ptr",stringPtr);
     MakePrim("load",Load);
@@ -293,10 +300,10 @@ int main (int argc, char *argv[]) {
     MakePrim("reset", sysReset);
     MakePrim("forget", forget);
     MakePrim("expect", expect);
-    MakePrim("constant", constant);
+    MakePrim("(constant)", constant);
     MakePrim("c@", cat);
     MakePrim("c!", cstore);
-    MakePrim("exec", Exec);
+    MakePrim("execute", Exec);
     
     MakeVariable("test", CONSTANT, 1, NULL);
 
@@ -325,7 +332,7 @@ int main (int argc, char *argv[]) {
     while(!exitFlag) {
         regs.lbp = &lb[0];
 
-        printf(":%d:OK>\n",regs.dsp);
+        printf("\n:%d:OK>",regs.dsp);
         Inline();
 
         while(token()) {
@@ -440,8 +447,7 @@ size_t strlen(const char *s) {
     return(i);
 }
 
-void Inline()
-{
+void Inline() {
     char           *c;
     
     regs.lbp = lb;
@@ -458,17 +464,14 @@ void Inline()
     regs.lbp = lb;
 }
 
-FindHeader()
-{
+void FindHeader() {
     struct header  *ptr;
     int             found = 0;
     
     ptr = latest;
     
-    while (ptr != (struct header *) NULL)
-    {
-        if (!strcmp(pad, ptr->name))
-        {
+    while (ptr != (struct header *) NULL) {
+        if (!strcmp(pad, ptr->name)) {
             cword = ptr;
             push(ptr->cfa);
             found = 1;
@@ -479,34 +482,30 @@ FindHeader()
     push(found);
 }
 
-
-
-void MakeHeader(char *name, int (*func) () )
-{
+MakeHeader(char *name, int (*func) () ) {
     struct header  *hp;
     
     hp = (struct header *) malloc(sizeof(struct header));
     
-    if (!hp)
-    {
+    if (!hp) {
         printf("Malloc fail in MakeHeader\n");
         return(1);
     }
     hp->len = strlen(name);
     hp->name = (char *) malloc(hp->len + 1);
-    if (!hp->name)
-    {
+
+    if (!hp->name) {
         printf("Malloc2 fail in MakeHeader\n");
         return(1);
     }
+
     hp->cfa = (int) func;
     strcpy(hp->name, name);
-    if (!latest)
-    {
+
+    if (!latest) {
         latest = hp;
         hp->lfa = (struct header *) NULL;
-    } else
-    {
+    } else {
         hp->lfa = latest;
         latest = hp;
     }
@@ -519,7 +518,7 @@ void MakePrim(char *name, int (*func)()) {
     mem[regs.dp++] = VOIDCAST next;
 }
 
-MakeVariable( char *name, int type, int (*rd) (), int (*wr) ()) {
+void MakeVariable( char *name, int type, int (*rd) (), int (*wr) ()) {
     push(type);
     regs.lbp = lb;
     strcpy(lb, name);

@@ -1,0 +1,55 @@
+'       missing
+(       missing
++loop   tested
+,       tested
+."      tested
+2*      tested
+2/      tested
+2@      missing
+:       tested
+;       tested
+>body   missing
+abort"  missing
+accept  missing
+align   missing
+aligned missing
+
+begin   present
+bl      tested
+cell+   Tested
+cells   Tested
+char    Tested
+constant present, non-standard
+create
+do      tested
+does>   missing
+else    present
+environment? - Missing, not mandatory
+evaluate    Tested
+exit    missing
+find    present - requires string stack
+fm/mod  missing
+if      tested
+immediate   missing, present as not
+j       missing
+loop    tested
+m*      missing
+move    missing 
+postpone    missing
+recurse missing
+repeat  present
+s"      present - String stack
+sm/rem  missing
+source  missing
+state   missing
+unloop  missing
+until   present
+variable    present - non standard
+while   present
+word    missing - New function see strchr
+[       missing
+[']     missing
+[char]  missing
+]       missing
+
+

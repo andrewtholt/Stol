@@ -21,7 +21,7 @@ all:	stol
 stol:	stol.o bufsplit.o env.h f16.h primary.h primary.c
 	$(CC) $(DFLAGS) stol.o $(LIBS) -o stol
 
-stol.o:	stol.c f16.h env.h build_no.h
+stol.o:	stol.c f16.h env.h build_no.h primary.c
 	$(CC) $(CFLAGS) $(DFLAGS) -o stol.o stol.c
 
 primary.o:	primary.c primary.h f16.h cmd.h exit_stat.h env.h
