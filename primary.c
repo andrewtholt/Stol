@@ -3530,6 +3530,13 @@ void printFeatures() {
         printf("Feature Status\n");
         printf("======= ======\n\n");
 
+#ifdef UNIX
+        printf("    UNIX\n");
+#else
+        printf("NOT UNIX\n");
+#endif
+        printf("==============\n");
+
 #ifdef STRINGS
         printf("    STRINGS\n");
 #else

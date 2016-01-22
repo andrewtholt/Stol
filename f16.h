@@ -14,12 +14,12 @@
 #endif
 
 /*
-	This is going to soound strange but here goes ...
-	if the function variable is called with CONSTANT
-	then it creates a constant.  If called with 
-	VARIABLE it creates a variable.
-	clear ?
-*/
+   This is going to soound strange but here goes ...
+   if the function variable is called with CONSTANT
+   then it creates a constant.  If called with 
+   VARIABLE it creates a variable.
+   clear ?
+   */
 
 #define CONSTANT 0
 #define VARIABLE 1
@@ -61,16 +61,16 @@ struct registers
 struct variable
 {
     int     type;
-            union
+    union
     {
-	int     ivar;
-	float   fvar;
-	/*
-	char   *string;
-	*/
-	char   string[1024];
-	char    cvar;
-    }               value;
+        int     ivar;
+        float   fvar;
+        /*
+           char   *string;
+         */
+        char   string[1024];
+        char    cvar;
+    } value;
     int     (*Write) ();
     int     (*Read) ();
 };
