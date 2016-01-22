@@ -27,6 +27,7 @@
 #include "env.h"
 #include "f16.h"
 
+#ifdef SUPERH
 #define SCASMR5 (vu_short *) 0xA4E40000
 #define SCASCR5 (vu_short *) 0xA4E40018
 #define SCASSR5 (vu_short *) 0xA4E40014
@@ -35,13 +36,14 @@
 #define SCAFCR5 0xA4E50018
 #define SCR_RE 0x10
 #define SCR_TE 0x20
-#define VOIDCAST (void *)
 
 #define FCR_RFRST 0x0002
 #define FCR_TFRST 0x0004
 
 #define SCBRR_VALUE(bps, clk) (((clk * 2 * 2) + 16 * bps) / (32 * bps) - 1)
+#endif
 
+#define VOIDCAST (void *)
 #define PROMPT "OK>\n"
 int             rs[128];
 int             ds[128];
@@ -89,6 +91,8 @@ char  *strsave(char *s) {
     }
     return (p);
 }
+
+void printFeatures();
 
 #include "bufsplit.c"
 #include "primary.c"
@@ -294,6 +298,7 @@ int main (int argc, char *argv[]) {
     MakePrim("strcmp",Strcmp);
 #endif
 
+    MakePrim(".features",printFeatures);
     MakePrim("#", hash);
     MakePrim("\\",hash);
 

@@ -5,6 +5,7 @@
 #include <fcntl.h>
 #endif
 
+void printFeatures();
 struct position pos;
 
 #ifdef ANSI
@@ -318,7 +319,7 @@ void mem2string() {
             tmp[i] = *(ptr + i);
         }
     }
-//    printf("len=%d\n",strlen(tmp));
+    //    printf("len=%d\n",strlen(tmp));
     spush( &tmp[0] );
 }
 //
@@ -1457,7 +1458,7 @@ vlist() {
 }
 
 #ifdef ANSI
-    void           *Find(name)
+void           *Find(name)
 #else
 Find(name)
 #endif
@@ -3235,9 +3236,8 @@ Token() {
             for(i=0;i<32;i++) {
                 buff[i]=0x00;
             }
-
-            while( (*regs.lbp > 0x1f) && (*regs.lbp < 0x7f) && (exitFlag == 0)) {
 #endif
+            while( (*regs.lbp > 0x1f) && (*regs.lbp < 0x7f) && (exitFlag == 0)) {
                 if( *regs.lbp != ' ' ) {
                     buff[count++]= (*regs.lbp);
                 } else {
@@ -3249,275 +3249,303 @@ Token() {
             spush( buff );
         }
     }
+}
 
 
-    BufSplit() {
-        if (regs.mode) {
-            mem[regs.dp++] = Find("bufsplit");
-        } else {
-            int             count = 0;
-            int             tokCount = 0;
-            char           *str, *str1, *str2, *sep;
+BufSplit() {
+    if (regs.mode) {
+        mem[regs.dp++] = Find("bufsplit");
+    } else {
+        int             count = 0;
+        int             tokCount = 0;
+        char           *str, *str1, *str2, *sep;
 
-            sep = spop();
-            str = spop();
-            tokCount = pop();
+        sep = spop();
+        str = spop();
+        tokCount = pop();
 
-            if(strlen(sep) > 0) {
-                sep++;
-            }
-
-            if(strlen(str) > 0) {
-                str++;
-            }
-
-            VOIDCAST        bufsplit(sep, 0);
-            count = bufsplit(str, tokCount);
-            push(count);
+        if(strlen(sep) > 0) {
+            sep++;
         }
+
+        if(strlen(str) > 0) {
+            str++;
+        }
+
+        VOIDCAST        bufsplit(sep, 0);
+        count = bufsplit(str, tokCount);
+        push(count);
     }
+}
 #endif
 
-    Malloc()
+Malloc()
+{
+    if (regs.mode)
+        mem[regs.dp++] = Find("malloc");
+    else
     {
-        if (regs.mode)
-            mem[regs.dp++] = Find("malloc");
-        else
-        {
-            char           *ptr;
-            int             size;
+        char           *ptr;
+        int             size;
 
-            size = pop();
-            ptr = (char *) malloc(size);
-            push(ptr);
-        }
+        size = pop();
+        ptr = (char *) malloc(size);
+        push(ptr);
     }
+}
 
-    Free()
+Free()
+{
+    if (regs.mode)
+        mem[regs.dp++] = Find("free");
+    else
     {
-        if (regs.mode)
-            mem[regs.dp++] = Find("free");
-        else
-        {
-            void *ptr;
-            ptr = (void *)pop();
-            free(ptr);
-        }
+        void *ptr;
+        ptr = (void *)pop();
+        free(ptr);
     }
+}
 
-    hash()
-    {
-        *regs.lbp = '\n';
-        *(regs.lbp + 1) = '\0';
-    }
+hash()
+{
+    *regs.lbp = '\n';
+    *(regs.lbp + 1) = '\0';
+}
 
-    verbose()
-    {
-        regs.verbose = 0xff;
-    }
+verbose()
+{
+    regs.verbose = 0xff;
+}
 
-    quiet()
-    {
-        regs.verbose = 0;
-    }
+quiet()
+{
+    regs.verbose = 0;
+}
 
 
-    void mm() {
-        unsigned int             *addr;
+void mm() {
+    unsigned int             *addr;
 
-        addr = pop();
+    addr = pop();
 
-        printf("mm:FIX ME \n");
-        /*
-           printf("%d\t%d\t", addr, mem[addr]);
-           scanf("%d", &mem[addr]);
-           */
-    }
-
+    printf("mm:FIX ME \n");
     /*
-       lines()
-       {
-       if (regs.mode)
-       mem[regs.dp++] = Find("lines");
-       else
-       push(slines);
-       }
-
-       columns()
-       {
-       if (regs.mode)
-       mem[regs.dp++] = Find("columns");
-       else
-       push(scolumns);
-       }
+       printf("%d\t%d\t", addr, mem[addr]);
+       scanf("%d", &mem[addr]);
        */
+}
+
+/*
+   lines()
+   {
+   if (regs.mode)
+   mem[regs.dp++] = Find("lines");
+   else
+   push(slines);
+   }
+
+   columns()
+   {
+   if (regs.mode)
+   mem[regs.dp++] = Find("columns");
+   else
+   push(scolumns);
+   }
+   */
 
 #if defined(STRINGS)
-    strtoc()
+strtoc()
+{
+    if (regs.mode)
+        mem[regs.dp++] = Find("strtoc");
+    else
     {
-        if (regs.mode)
-            mem[regs.dp++] = Find("strtoc");
-        else
-        {
-            char           *ptr;
-            char            c;
+        char           *ptr;
+        char            c;
 
-            int             len;
-            int             i;
+        int             len;
+        int             i;
 
-            ptr = spop();
-            len = strlen(ptr);
+        ptr = spop();
+        len = strlen(ptr);
 
-            for (i = (len - 1); i >= 0; i--)
-                push(*(ptr + i));
+        for (i = (len - 1); i >= 0; i--)
+            push(*(ptr + i));
 
-            push(len);
-        }
+        push(len);
     }
+}
 #endif
 
-    /*
-       fargc()
-       {
-       if (regs.mode)
-       mem[regs.dp++] = Find("argc");
-       else
-       {
-       extern int      Argc;
-       push(Argc);
-       }
-       }
+/*
+   fargc()
+   {
+   if (regs.mode)
+   mem[regs.dp++] = Find("argc");
+   else
+   {
+   extern int      Argc;
+   push(Argc);
+   }
+   }
 
-       fargv()
-       {
-       if (regs.mode)
-       mem[regs.dp++] = Find("argv");
-       else
-       {
-       extern char   **Argv;
-       char           *ptr;
-       char           *p;
+   fargv()
+   {
+   if (regs.mode)
+   mem[regs.dp++] = Find("argv");
+   else
+   {
+   extern char   **Argv;
+   char           *ptr;
+   char           *p;
 
-       int             position;
-       position = pop();
-       p = *(Argv + position);
-       ptr = (char *) strsave(p);
-       push(ptr);
-       }
-       }
-       */
+   int             position;
+   position = pop();
+   p = *(Argv + position);
+   ptr = (char *) strsave(p);
+   push(ptr);
+   }
+   }
+   */
 
 #if defined(STRINGS)
 
-    void athToken() {
-    }
+void athToken() {
+}
 
     void
-        sinsert()
+sinsert()
+{
+    if (regs.mode)
+        mem[regs.dp++] = Find("sinsert");
+    else
+    {
+        char            buffer[512];
+        int             insertAs = 0;
+        int             t;
+        int             i;
+
+        t = regs.ssp - 1;
+        strcpy(buffer, ss[t].Entry);
+        insertAs = pop();
+
+        for (i = t; i >= insertAs; i--)
         {
-            if (regs.mode)
-                mem[regs.dp++] = Find("sinsert");
-            else
-            {
-                char            buffer[512];
-                int             insertAs = 0;
-                int             t;
-                int             i;
-
-                t = regs.ssp - 1;
-                strcpy(buffer, ss[t].Entry);
-                insertAs = pop();
-
-                for (i = t; i >= insertAs; i--)
-                {
-                    strcpy(ss[i].Entry, ss[i - 1].Entry);
-                }
-                strcpy(ss[insertAs].Entry, buffer);
-            }
+            strcpy(ss[i].Entry, ss[i - 1].Entry);
         }
+        strcpy(ss[insertAs].Entry, buffer);
+    }
+}
 #endif
 
 #if defined(SIGNALS)
     void
-        alarmHandler()
-        {
-            regs.ev_sigalarm++;
-        }
+alarmHandler()
+{
+    regs.ev_sigalarm++;
+}
 
     void
-        getev_sigalarm()
-        {
-            if (regs.mode)
-                mem[regs.dp++] = Find("ev_sigalarm_get");
-            else
-            {
-                push(regs.ev_sigalarm);
-            }
-        }
+getev_sigalarm()
+{
+    if (regs.mode)
+        mem[regs.dp++] = Find("ev_sigalarm_get");
+    else
+    {
+        push(regs.ev_sigalarm);
+    }
+}
 
     void
-        clrev_sigalarm()
-        {
-            if (regs.mode)
-                mem[regs.dp++] = Find("ev_sigalarm_clr");
-            else
-            {
-                regs.ev_sigalarm = 0;
-            }
-        }
+clrev_sigalarm()
+{
+    if (regs.mode)
+        mem[regs.dp++] = Find("ev_sigalarm_clr");
+    else
+    {
+        regs.ev_sigalarm = 0;
+    }
+}
 
 
     void
-        Alarm()
-        {
-            if (regs.mode)
-                mem[regs.dp++] = Find("alarm");
-            else
-            {
-                int             value;
-                int             ret;
+Alarm()
+{
+    if (regs.mode)
+        mem[regs.dp++] = Find("alarm");
+    else
+    {
+        int             value;
+        int             ret;
 
-                value = pop();
-                ret = signal(SIGALRM, alarmHandler);
-                alarm(value);
-                push(ret);
-            }
-        }
-
-    void
-        sigioHandler()
-        {
-            regs.ev_sigio++;
-        }
+        value = pop();
+        ret = signal(SIGALRM, alarmHandler);
+        alarm(value);
+        push(ret);
+    }
+}
 
     void
-        getev_sigio()
-        {
-            if (regs.mode)
-                mem[regs.dp++] = Find("ev_sigio_get");
-            else
-            {
-                push(regs.ev_sigio);
-            }
-        }
+sigioHandler()
+{
+    regs.ev_sigio++;
+}
 
     void
-        clrev_sigio()
-        {
-            if (regs.mode)
-                mem[regs.dp++] = Find("ev_sigio_clr");
-            else
-            {
-                regs.ev_sigio = 0;
-            }
-        }
+getev_sigio()
+{
+    if (regs.mode)
+        mem[regs.dp++] = Find("ev_sigio_get");
+    else
+    {
+        push(regs.ev_sigio);
+    }
+}
 
     void
-        SigIO()
-        {
-            void           *ret;
-            ret = (void *) signal(SIGIO, sigioHandler);
-            if (ret == -1)
-                perror("SigIO");
-        }
+clrev_sigio()
+{
+    if (regs.mode)
+        mem[regs.dp++] = Find("ev_sigio_clr");
+    else
+    {
+        regs.ev_sigio = 0;
+    }
+}
+
+    void
+SigIO()
+{
+    void           *ret;
+    ret = (void *) signal(SIGIO, sigioHandler);
+    if (ret == -1)
+        perror("SigIO");
+}
+
 #endif
+void printFeatures() {
+    if (regs.mode) {
+        mem[regs.dp++] = Find(".features");
+    } else {
+        printf("Feature Status\n");
+        printf("======= ======\n\n");
+
+#ifdef STRINGS
+        printf("    STRINGS\n");
+#else
+        printf("NOT STRINGS\n");
+#endif
+
+#ifdef SIGNALS
+        printf("    SIGNALS\n");
+#else
+        printf("NOT SIGNALS\n");
+#endif
+
+#ifdef NET
+        printf("    NET\n");
+#else
+        printf("NOT NET\n");
+#endif
+    }
+}
