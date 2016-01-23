@@ -136,6 +136,9 @@ void Eval () {
     }
 }
 
+/*
+ * Load a script from a given memory location
+ */
 void Load() {
     char *ptr;
 
