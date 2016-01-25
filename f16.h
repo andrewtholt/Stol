@@ -23,7 +23,7 @@
 
 #define CONSTANT 0
 #define VARIABLE 1
-#define STRINGS 1
+// #define STRINGS 1
 
 struct header
 {

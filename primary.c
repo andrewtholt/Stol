@@ -13,7 +13,7 @@ void           *Find();
 #endif
 
 extern char    *getenv();
-#define STRINGS 1
+// #define STRINGS 1
 
 #if defined(STRINGS)
 extern int      bufsplit(char *, int);
@@ -1379,7 +1379,9 @@ void regdump()
     printf("\tca\t\t%d\t%08x\n", regs.ca, regs.ca);
     printf("\tdsp\t\t%d\n", regs.dsp);
     printf("\trsp\t\t%d\n", regs.rsp);
+#ifdef STRINGS
     printf("\tssp\t\t%d\n", regs.ssp);
+#endif
     printf("\tcsp\t\t%d\n", regs.csp);
     printf("\tmode\t\t%d\n", regs.mode);
     printf("\tstate\t\t%d\n", regs.state);

@@ -115,7 +115,9 @@ int main (int argc, char *argv[]) {
     
     regs.dsp = 0;
     regs.rsp = 0;
+#ifdef STRINGS
     regs.ssp = 0;
+#endif
     regs.Trace = 0;
     regs.lbp = &tib[0];
     regs.mode = 0;
@@ -201,7 +203,6 @@ int main (int argc, char *argv[]) {
     MakePrim("leave", Break);
     MakePrim("i", findex);
     MakePrim("sleep",fsleep);
-    MakePrim("find",CFind);
     
     MakePrim("swap", swap);
     MakePrim("drop", drop);
@@ -289,6 +290,7 @@ int main (int argc, char *argv[]) {
     MakePrim("mem2string",mem2string);
     MakePrim("string-ptr",stringPtr);
     MakePrim("load",Load);
+    MakePrim("find",CFind);
 #ifdef UBOOT
     MakePrim("$system",ubootSystem);
     MakePrim("saveenv",ubootSaveenv);

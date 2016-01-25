@@ -1,7 +1,9 @@
+include profile.mk
+
 CC = gcc
-CFLAGS = -g -c -w -DSTRINGS #-DSIGNALS -DNET # -DTERMCAP
-DFLAGS = -g -DUNIX
-LIBS = -lm # -ltermcap
+# CFLAGS = -g -c -w -DSTRINGS #-DSIGNALS -DNET # -DTERMCAP
+# DFLAGS = -g -DUNIX
+# LIBS = -lm # -ltermcap
 #
 # Define if networking included
 # NET = 1
