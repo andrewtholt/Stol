@@ -46,7 +46,7 @@
 #define VOIDCAST (void *)
 #define PROMPT "OK>\n"
 int             rs[128];
-int             ds[128];
+unsigned int             ds[128];
 int             cs[128];    // Compile stack 
 struct header *latest;
 char pad[255];
@@ -94,7 +94,7 @@ char  *strsave(char *s) {
 
 void printFeatures();
 
-#include "bufsplit.c"
+// #include "bufsplit.c"
 #include "primary.c"
 
 int rc;
@@ -273,7 +273,7 @@ int main (int argc, char *argv[]) {
     MakePrim("'", Tick);
 #if defined(STRINGS)
     MakePrim("token", Token); 
-    MakePrim("bufsplit", BufSplit); 
+//    MakePrim("bufsplit", BufSplit); 
     MakePrim("$getenv", Getenv); 
     MakePrim("string", string);
     MakePrim("s\"", squot);
@@ -316,7 +316,7 @@ int main (int argc, char *argv[]) {
 
     MakePrim("nop", nop);
     
-    regs.base = 10;
+    regs.base = 16;
     regs.fence = Find("nop");
     
     regs.fpformat = strsave( "%f");
@@ -327,7 +327,7 @@ int main (int argc, char *argv[]) {
     regs.lbp = lb;
     strcpy(lb, "Startup");
 
-    Startup();
+//    Startup();
     
     for(i=0;i<255;i++) {
         lb[i]=0x20;
@@ -362,9 +362,10 @@ int main (int argc, char *argv[]) {
                         } while (regs.rsp > 0);
                     }
                 } else {
-                    int tmp;
+                    unsigned long long tmp;
                     
-                    tmp=STRTOL(pad,NULL,regs.base);
+//                    tmp=STRTOL(pad,NULL,regs.base);
+                    tmp=strtoll(pad,NULL,regs.base);
                     
                     if ( ((tmp == 0) && (*pad == 0x30)) || ( tmp != 0)) {
                         if (!regs.mode) {

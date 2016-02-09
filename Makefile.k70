@@ -1,8 +1,7 @@
 include profile.mk
-
-CC = gcc
+# CC = gcc
 # CFLAGS = -g -c -w -DSTRINGS #-DSIGNALS -DNET # -DTERMCAP
-# DFLAGS = -g -DUNIX
+DFLAGS = -g -DUNIX -DSTRINGS
 # LIBS = -lm # -ltermcap
 #
 # Define if networking included
@@ -20,8 +19,9 @@ CC = gcc
 #
 all:	stol 
 
-stol:	stol.o bufsplit.o env.h f16.h primary.h primary.c
-	$(CC) $(DFLAGS) stol.o $(LIBS) -o stol
+# stol:	stol.o bufsplit.o env.h f16.h primary.h primary.c
+stol:	stol.o env.h f16.h primary.h primary.c
+	$(CC) $(CFLAGS) $(DFLAGS) stol.o $(LIBS) -o stol
 
 stol.o:	stol.c f16.h env.h build_no.h primary.c
 	$(CC) $(CFLAGS) $(DFLAGS) -c -o stol.o stol.c
@@ -58,6 +58,6 @@ backup:	Makefile
 clean:
 	rm -f core *.o a.out sstol stol cscope.out
 
-install:
+install:	Makefile
 	mv stol ~/bin
 

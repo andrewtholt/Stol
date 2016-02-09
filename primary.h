@@ -21,7 +21,7 @@ extern int      fps;
 extern char    *back_drop;
 
 extern int      rs[];
-extern int      ds[];
+extern unsigned int      ds[];
 extern int      cs[];
 
 // extern struct   sstack ss[512];

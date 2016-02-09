@@ -925,7 +925,7 @@ dots() {
         if (regs.dsp > 0) {
             printf("Top");
             for (i = regs.dsp - 1; i >= 0; i--)
-                printf("\t%d\t%04x\n", ds[i], ds[i]);
+                printf("\t%ud\t%04X\n", ds[i], ds[i]);
         } else {
             printf("Empty\n");
         }
@@ -3256,7 +3256,7 @@ Token() {
     }
 }
 
-
+/*
 BufSplit() {
     if (regs.mode) {
         mem[regs.dp++] = Find("bufsplit");
@@ -3282,6 +3282,7 @@ BufSplit() {
         push(count);
     }
 }
+*/
 #endif
 
 Malloc()
