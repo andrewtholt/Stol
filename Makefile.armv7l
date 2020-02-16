@@ -1,0 +1,63 @@
+include profile.mk
+
+CC = gcc 
+# CFLAGS = -g -c -w -DSTRINGS #-DSIGNALS -DNET # -DTERMCAP
+# DFLAGS = -g -DUNIX
+# LIBS = -lm # -ltermcap
+#
+# Define if networking included
+# NET = 1
+#
+# for string functions
+# STRINGS=1
+#
+# For termcap support
+# TERMCAP=1
+#
+# Fort floating point
+#
+# FLOATS=1
+#
+all:	stol 
+
+stol:	stol.o bufsplit.o env.h f16.h primary.h primary.c
+	$(CC) $(DFLAGS) stol.o $(LIBS) -o stol
+
+stol.o:	stol.c f16.h env.h build_no.h primary.c
+	$(CC) $(CFLAGS) $(DFLAGS) -c -o stol.o stol.c
+
+primary.o:	primary.c primary.h f16.h cmd.h exit_stat.h env.h
+	$(CC) $(CFLAGS) $(DFLAGS) -o primary.o primary.c
+
+keystroke.o:	keystroke.c env.h
+	$(CC) $(CFLAGS) $(DFLAGS) -o keystroke.o keystroke.c
+
+cursor.o:	cursor.c f16.h env.h
+	$(CC) $(CFLAGS) $(DFLAGS) -o cursor.o cursor.c
+
+bufsplit.o:	bufsplit.c env.h
+	$(CC) $(CFLAGS) $(DFLAGS) bufsplit.c -o bufsplit.o
+
+socket.o:	sopen.h socket.c	
+	$(CC) $(CFLAGS) $(DFLAGS) socket.c -o socket.o
+
+arch:	Makefile
+	touch LastBackedUp.txt
+	/usr/5bin/ustar cvf /dev/rfd0 [a-zA-Z]*.h [a-zA-Z]*.c [a-zA-Z]*.ms [a-zA-Z]*.man Makefile [a-zA-Z]*.txt [a-zA-Z]*.fth [a-zA-Z]*.fld [a-zA-Z]*.bac SpdWords.names
+	eject
+
+tape:	Makefile
+	touch LastBackedUp.txt
+	tar cvf /dev/rst4 [a-zA-Z]*.h [a-zA-Z]*.c [a-zA-Z]*.ms [a-zA-Z]*.man Makefile [a-zA-Z]*.txt [a-zA-Z]*.fth [a-zA-Z]*.fld [a-zA-Z]*.bac SpdWords.names
+	eject
+
+backup:	Makefile
+	touch LastBackedUp.txt
+	tar cvf ../stol.tar [a-zA-Z]*.h [a-zA-Z]*.c [a-zA-Z]*.ms [a-zA-Z]*.man Makefile [a-zA-Z]*.txt [a-zA-Z]*.fth [a-zA-Z]*.fld [a-zA-Z]*.bac
+
+clean:
+	rm -f core *.o a.out sstol stol cscope.out
+
+install:
+	mv stol ~/bin
+
