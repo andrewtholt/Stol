@@ -1,1 +1,1 @@
-./uclinux.mk
+./basic.mk

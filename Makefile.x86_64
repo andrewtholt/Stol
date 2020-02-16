@@ -1,6 +1,6 @@
 include profile.mk
 
-CC = gcc
+CC = gcc -m32
 # CFLAGS = -g -c -w -DSTRINGS #-DSIGNALS -DNET # -DTERMCAP
 # DFLAGS = -g -DUNIX
 # LIBS = -lm # -ltermcap
